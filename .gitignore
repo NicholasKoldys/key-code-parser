@@ -1,0 +1,12 @@
+# IGNORE ALL
+*/**/*
+*.*
+
+# ALLOW
+!src/**/*
+
+!index.js
+
+!.gitignore
+!package.json
+!tsconfig.json
