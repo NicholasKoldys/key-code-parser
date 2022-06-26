@@ -1,0 +1,28 @@
+{
+  "name": "key-code-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "ts-build": "pnpm exec tsc",
+    "ts-watch": "pnpm exec tsc -w",
+    "prestart": "pnpm run ts-watch",
+    "start": "node ./src/index.js",
+    "prebuild": "pnpm run ts-build",
+    "build": "node ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "typescript": "5.6.0-dev.20240625"
+  },
+  "packageManager": "pnpm@9.0.6+sha1.648f6014eb363abb36618f2ba59282a9eeb3e879"
+}
