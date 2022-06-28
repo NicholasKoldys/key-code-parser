@@ -4,6 +4,7 @@
 
 # ALLOW
 !src/**/*
+!demo/**/*
 
 !index.js
 
