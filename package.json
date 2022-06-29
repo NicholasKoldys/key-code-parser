@@ -2,7 +2,7 @@
   "name": "key-code-parser",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "type": "module",
   "scripts": {
     "ts-build": "pnpm exec tsc",

@@ -1,0 +1,69 @@
+html {
+  color: ivory;
+  font-size: 1em;
+  font-weight: 700;
+  font-family: Calibri, 'Trebuchet MS', sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: rgb(38, 34, 47);
+}
+
+button {
+  display: block;
+  margin: 1em auto;
+  border-style: none;
+  border-radius: .5rem;
+  font-size: x-large;
+  font-weight: bolder;
+  background-color: rgb(101, 11, 29);
+  color: inherit;
+}
+
+.main {
+  color: inherit;
+  font-family: inherit;
+  font-size: 1.5ch;
+
+  display: flex;
+  margin: 0 auto;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+
+  gap: 2vh;
+  padding: 0 2dvw;
+  min-height: 75dvh;
+}
+
+#MDEditor {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+
+  flex: 1;
+  box-sizing: border-box;
+  min-height: 35dvh;
+  background-color: rgb(47, 34, 34);
+}
+
+#MDText {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+
+  flex: 1;
+  flex-wrap: wrap;
+  /* padding: 2vh; */
+  background-color: rgb(47, 39, 34);
+  max-height: 75dvh;
+  /* overflow: scroll; */
+  overflow: auto;
+  /* word-wrap: break-word; */
+}
+
+#submit {
+  padding: 2vh;
+}
