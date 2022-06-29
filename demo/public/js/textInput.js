@@ -95,8 +95,6 @@ function parseBlocks(MDEditorVal) {
     const interpretter = new KeyInterpreter();
       interpretter.parse(MDEditorVal);
 
-    // console.log(interpretter.getStringArray());
-
     return interpretter.getStringArray();
 
   } catch (e) {
@@ -112,55 +110,6 @@ submit.onclick = (function applyMarkdown() {
   MDText.innerText = '';
 
   parseBlocks(MDEditor.value)?.map(keyedStr => {
-    // if(MDText.innerText.length > 0 && (val != '\n' || val != ' ')) {
-    //   MDText.innerText += '\n';
-    // }
-    // val === '\n' ? console.log('val is newline') : console.log(`\`${val}\``);
     MDText.innerText += keyedStr;
-    // return keyedStr
   });
 });
-
-// console.log(justRun({ callback: parseBlocks, args: [MDEditor.value] }, 10000));
-
-// (function parseInline(){
-
-// })();
-
-
-// const levelOfimportance = {
-//   extensions,
-//   space,
-//   code,
-//   fences,
-//   heading,
-//   hr,
-//   blockquote,
-//   list,
-//   html,
-//   def, //definition
-//   table,
-//   lheading,
-//   text,
-//   infLoop,//breakout
-
-//   //inline Level
-//   link, //maskout
-//   reflinkSearch,
-//   blockskip,
-//   punctuation,
-//   extensions,
-//   escape,
-//   tag,
-//   link,
-//   reflink,
-//   emStrong,
-//   codespan,
-//   br,
-//   del,
-//   autoLink,
-//   url,
-//   extText,
-//   text,
-//   infLoop //breakout
-// }
