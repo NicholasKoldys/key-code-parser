@@ -1,5 +1,20 @@
-import { BlockOrderedRules, InlineOrderedRules } from "./Rules.js";
-import type { Rules, BlockRules, InlineRules } from "./Rules.js";
+/* NicholasKoldys.dev
+All rights reserved (c) 2024
+
+KEY-CODE-PARSER
+
+Parser.ts/js
+
+Constains Tokenizer - Keyinterpreter - KeyParser API
+
+History
+-------
+2024/10/18 - Nicholas.K. - 1.0.0
+  Initial creation.
+ */
+
+import { defaultKeys, DefinedKeys } from "./Keys.ts";
+import { BlockOrderedRules, InlineOrderedRules, BlockRules, InlineRules, Rules } from "./Rules.ts";
 
 interface Token {
   keyName: string | number;
@@ -7,14 +22,17 @@ interface Token {
   text: string;
   depth?: number;
   type?: string;
-  tokens?: Array<Token>;
+  children?: Array<Token>;
 }
 
 class Tokenizer {
-  public blockRules = BlockOrderedRules;
-  public inlineRules = InlineOrderedRules;
+  public blockRules;
+  public inlineRules;
 
-  constructor() {}
+  constructor( keys: DefinedKeys = defaultKeys ) {
+    this.blockRules = BlockOrderedRules( keys );
+    this.inlineRules = InlineOrderedRules( keys );
+  }
 
   tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, token?: Token ): Token {    
     const result = parsedStr?.groups ? ( parsedStr.groups?.RESULT || 'null' ) : parsedStr[1];
@@ -41,21 +59,6 @@ export class KeyInterpreter {
     this.inlineQueue = [];
   }
 
-  private iterateTokens( callback: Function, tokenArray?: Array<Token> ) {
-
-    if( !tokenArray ) tokenArray = this.tokens;
-
-    for( let i = 0; i < tokenArray.length; i++) {
-
-      if( tokenArray[i]?.tokens ) {
-        this.iterateTokens( callback, tokenArray[i]!.tokens );
-
-      } else {
-        callback( tokenArray[i] );
-      }
-    }
-  }
-
   lexar( src: string, rules: BlockRules | InlineRules, parent?: Token, setRule?: number ) {
     const keys = Object.keys( rules ) as Array<keyof Rules>;
     const rulesLength = keys.length;
@@ -73,9 +76,9 @@ export class KeyInterpreter {
 
           if( parent ) {
 
-            if(!parent?.tokens) parent.tokens = new Array();
+            if(!parent?.children) parent.children = new Array();
 
-            tokenArray = parent.tokens;
+            tokenArray = parent.children;
 
           } else {
             tokenArray = this.tokens;
@@ -143,11 +146,11 @@ export class KeyInterpreter {
 
     this.iterateTokens( ( token: Token ) => {
 
-      if(token?.tokens) {
-        const len = token.tokens.length;
+      if(token?.children) {
+        const len = token.children.length;
 
         for (let i = 0; i < len; i++) {
-          stringArray.push( token.tokens[i].text );
+          stringArray.push( token.children[i].text );
         }
 
       } else {
@@ -157,4 +160,28 @@ export class KeyInterpreter {
 
     return stringArray;
   }
+
+  private iterateTokens( callback: Function, tokenArray?: Array<Token> ) {
+
+    if( !tokenArray ) tokenArray = this.tokens;
+
+    for( let i = 0; i < tokenArray.length; i++) {
+
+      if( tokenArray[i]?.children ) {
+        this.iterateTokens( callback, tokenArray[i]!.children );
+
+      } else {
+        callback( tokenArray[i] );
+      }
+    }
+  }
 }
+
+/* export class KeyCodeParserFactory {
+  constructor( tokens: Array<Key> ) {
+
+  }
+}
+export default class KeyCodeParser {
+
+} */

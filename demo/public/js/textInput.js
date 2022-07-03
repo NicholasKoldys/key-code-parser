@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { KeyInterpreter } from "../../../src/main.js";
+import { KeyInterpreter } from "../../../src/Parser.js";
 import { justRun } from "../../../src/utils/just-run.js";
 
 /**
@@ -46,8 +46,9 @@ ___
 ===
 \`\`\`
 5._3
-5._4 Fencing 1
+5._4 Fencing 1 " using \` " 
 5._5 block that will enable style default is: 'block-style'
+\`\`\`
 5._6
 5._7
 5._8		.
@@ -95,6 +96,10 @@ function parseBlocks(MDEditorVal) {
     const interpretter = new KeyInterpreter();
       interpretter.parse(MDEditorVal);
 
+    interpretter.getStringArray().forEach( val => {
+      // console.log(val);
+    })
+
     return interpretter.getStringArray();
 
   } catch (e) {
@@ -113,3 +118,24 @@ submit.onclick = (function applyMarkdown() {
     MDText.innerText += keyedStr;
   });
 });
+
+const obj1 = {
+  'hello' : {
+    world: '1'
+  }
+}
+
+const obj2 = {
+  'hello' : {
+    world: '2'
+  }
+}
+
+const map = new Map( [
+  ['hello', obj1], 
+  ['hello2', obj2], 
+] );
+
+console.log( obj1, obj2 );
+
+console.log( Object.fromEntries( map ) );
