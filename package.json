@@ -2,20 +2,31 @@
   "name": "key-code-parser",
   "version": "1.0.0",
   "description": "",
-  "main": "Parser.js",
   "type": "module",
+  "private": "true",
   "scripts": {
-    "ts-build": "pnpm exec tsc",
-    "ts-watch": "pnpm exec tsc -w",
-    "prestart": "pnpm run ts-build",
-    "start": "pnpm run ts-watch",
-    "prebuild": "pnpm run ts-build"
+    "watch:ts": "pnpm exec tsc --watch",
+    "watch:node": "pnpm exec node --test --watch",
+    "build:js": "pnpm exec tsc -p ./tsconfig.json",
+    "build:pack": "pnpm exec webpack --config webpack.config.js",
+    "pretest": "pnpm run build:dist",
+    "test": "pnpm exec node --test \"./dist/_test/**/*.test.js\"",
+    "prestart": "pnpm run test",
+    "start": "pnpm run watch:ts",
+    "serve": "pnpm exec node ./server.js",
+    "build": "pnpm run build:js && pnpm run build:pack",
+    "active-test": "pnpm run \"/^watch:.*/\""
   },
   "keywords": [],
   "author": "NicholasKoldys.dev",
   "license": "ISC",
   "packageManager": "pnpm@9.0.6+sha1.648f6014eb363abb36618f2ba59282a9eeb3e879",
   "devDependencies": {
-    "typescript": "^5.6.3"
+    "html-webpack-plugin": "^5.6.2",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.3",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
   }
 }
