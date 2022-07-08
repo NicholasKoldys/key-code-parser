@@ -1,6 +1,5 @@
 // @ts-nocheck
-import { KeyInterpreter } from "../../../src/Parser.js";
-import { justRun } from "../../../src/utils/just-run.js";
+import { KeyInterpreter } from "../../../dist/Parser.js";
 
 /**
  * @type {HTMLTextAreaElement}
@@ -118,24 +117,3 @@ submit.onclick = (function applyMarkdown() {
     MDText.innerText += keyedStr;
   });
 });
-
-const obj1 = {
-  'hello' : {
-    world: '1'
-  }
-}
-
-const obj2 = {
-  'hello' : {
-    world: '2'
-  }
-}
-
-const map = new Map( [
-  ['hello', obj1], 
-  ['hello2', obj2], 
-] );
-
-console.log( obj1, obj2 );
-
-console.log( Object.fromEntries( map ) );
