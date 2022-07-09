@@ -12,7 +12,7 @@ History
 2024/10/18 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-import { DefinedKeys, keyable } from "./Keys.ts";
+import { DefinedKeys, Keyable } from "./Keys.js";
 
 export type Rules = {
   regex: RegExp,
@@ -57,15 +57,12 @@ export function regExTemplate(regex: string | RegExp, opt = '') {
 //! All blocks need to be surrounded by spaces, if not we cannnot go line by line.
 export const BlockOrderedRules = function( keys: DefinedKeys ): BlockRules {
 
-  const FencingKey = `${keys[keyable.Fencing].key}{${keys[keyable.Fencing].repeated}}` 
-    || '\`{3}';
-  const HeaderPrimaryKey = `${keys[keyable.HeaderPrimaryKey].key}{${keys[keyable.HeaderPrimaryKey].repeated}}` 
-    || '\-{3}';
-  const HeaderSecondaryKey = `${keys[keyable.HeaderSecondaryKey].key}{${keys[keyable.HeaderPrimaryKey].repeated}}` 
-    || '\={3}';
+  const FencingKey = `${keys[Keyable.Fencing].key}{${keys[Keyable.Fencing].repeated}}`;
+  const HeaderPrimaryKey = `${keys[Keyable.HeaderPrimaryKey].key}{${keys[Keyable.HeaderPrimaryKey].repeated}}`;
+  const HeaderSecondaryKey = `${keys[Keyable.HeaderSecondaryKey].key}{${keys[Keyable.HeaderPrimaryKey].repeated}}`;
 
   const EndOfLine = /\n|$/;
-  const MustEnd = regExTemplate(/(?:EndOfLine%)/)
+  const AnyEnding = regExTemplate(/(?:EndOfLine%)/)
     .replace('EndOfLine%', EndOfLine)
       .getRegex();
   const AllowableSpace = regExTemplate(/( *?(EndOfLine%))/)
@@ -93,18 +90,18 @@ export const BlockOrderedRules = function( keys: DefinedKeys ): BlockRules {
       hasTokens: true,
     }],
     ['Heading1Sect', {
-      regex: regExTemplate(/^(?<RESULT>EmptySurronding%|.+\n)(?:HeaderPrimaryKey%)MustEnd%/)
+      regex: regExTemplate(/^(?<RESULT>EmptySurronding%|.+\n)(?:HeaderPrimaryKey%)AnyEnding%/)
         .replace('HeaderPrimaryKey%', HeaderPrimaryKey)
         .replace('EmptySurronding%', EmptySurronding)
-        .replace('MustEnd%', MustEnd)
+        .replace('AnyEnding%', AnyEnding)
           .getRegex(),
       hasTokens: false,
     }],
     ['Heading2Sect', {
-      regex: regExTemplate(/^(?<RESULT>EmptySurronding%|.+\n)(?:HeaderSecondaryKey%)MustEnd%/)//equals sign
+      regex: regExTemplate(/^(?<RESULT>EmptySurronding%|.+\n)(?:HeaderSecondaryKey%)AnyEnding%/)//equals sign
         .replace('HeaderSecondaryKey%', HeaderSecondaryKey)
         .replace('EmptySurronding%', EmptySurronding)
-        .replace('MustEnd%', MustEnd)
+        .replace('AnyEnding%', AnyEnding)
           .getRegex(),
       hasTokens: false,
     }],
@@ -125,16 +122,12 @@ export const BlockOrderedRules = function( keys: DefinedKeys ): BlockRules {
 export const InlineOrderedRules = function( keys: DefinedKeys ): InlineRules {
 // export const InlineOrderedRules: InlineRules = Object.fromEntries(new Map([
 
-  const BoldKey = `${keys[keyable.Bold].key}{${keys[keyable.Bold].repeated}}` 
-    || '\*{2}';
-  const RedactKey = `${keys[keyable.Redact].key}{${keys[keyable.Redact].repeated}}` 
-    || '\~{2}';
-  const InterruptKey = `${keys[keyable.Interrupt].key}{${keys[keyable.Interrupt].repeated}}` 
-    || '\/{2}';
-  const Highlight = `${keys[keyable.Highlight].key}{${keys[keyable.Highlight].repeated}}` 
-    || '\`{2}';
+  const BoldKey = `${keys[Keyable.Bold].key}{${keys[Keyable.Bold].repeated}}`;
+  const RedactKey = `${keys[Keyable.Redact].key}{${keys[Keyable.Redact].repeated}}`;
+  const InterruptKey = `${keys[Keyable.Interrupt].key}{${keys[Keyable.Interrupt].repeated}}`;
+  const Highlight = `${keys[Keyable.Highlight].key}{${keys[Keyable.Highlight].repeated}}`;
 
-  const Spanable = regExTemplate(/(Bold%|Redact%)|(Bold%|Redact%)/)
+  const Spanable = regExTemplate(/(Bold%|Redact%)/)
     .replace('Bold%', BoldKey)
     .replace('Redact%', RedactKey)
     .getRegex();
