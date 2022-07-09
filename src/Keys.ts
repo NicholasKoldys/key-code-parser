@@ -12,7 +12,7 @@ History
 2024/10/18 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-export enum keyable {
+export enum Keyable {
   Fencing = 'fencing',
   HeaderPrimaryKey = 'headerPrimary',
   HeaderSecondaryKey = 'headerSecondary',
@@ -22,17 +22,10 @@ export enum keyable {
   Interrupt = 'interrupt'
 }
 
-export interface KeyTemp {
-  [ rule: string ] : {
-    key: string,
-    repeated: number,
-  }
-}
-
 export interface Key {
-  key: string,
-  repeated: number,
-  rule: keyable,
+  key: string, 
+  repeated: number, 
+  rule: Keyable, 
 }
 
 export type DefinedKeys = {
@@ -40,39 +33,39 @@ export type DefinedKeys = {
 }
 
 export const defaultKeys: DefinedKeys = Object.fromEntries( new Map([
-  [keyable.Fencing, {
+  [Keyable.Fencing, {
     key: '\`',
     repeated: 3,
-    rule: keyable.Fencing
+    rule: Keyable.Fencing
   }],
-  [keyable.HeaderPrimaryKey, {
-    key: '-',
+  [Keyable.HeaderPrimaryKey, {
+    key: '\\-',
     repeated: 3,
-    rule: keyable.HeaderPrimaryKey
+    rule: Keyable.HeaderPrimaryKey
   }],
-  [keyable.HeaderSecondaryKey, {
-    key: '=',
+  [Keyable.HeaderSecondaryKey, {
+    key: '\\=',
     repeated: 3,
-    rule: keyable.HeaderSecondaryKey
+    rule: Keyable.HeaderSecondaryKey
   }],
-  [keyable.Highlight, {
-    key: '\`',
+  [Keyable.Highlight, {
+    key: '\\`',
     repeated: 2,
-    rule: keyable.Highlight
+    rule: Keyable.Highlight
   }],
-  [keyable.Bold, {
-    key: '\*',
+  [Keyable.Bold, {
+    key: '\\*',
     repeated: 2,
-    rule: keyable.Bold
+    rule: Keyable.Bold
   }],
-  [keyable.Redact, {
-    key: '\~',
+  [Keyable.Redact, {
+    key: '\\~',
     repeated: 2,
-    rule: keyable.Redact
+    rule: Keyable.Redact
   }],
-  [keyable.Interrupt, {
+  [Keyable.Interrupt, {
     key: '\\',
     repeated: 2,
-    rule: keyable.Interrupt
+    rule: Keyable.Interrupt
   }],
 ]));
