@@ -12,9 +12,14 @@ History
 2024/10/18 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-
-import { defaultKeys, DefinedKeys } from "./Keys.ts";
-import { BlockOrderedRules, InlineOrderedRules, BlockRules, InlineRules, Rules } from "./Rules.ts";
+import { defaultKeys, DefinedKeys } from "./Keys.js";
+import { 
+  BlockOrderedRules, 
+  InlineOrderedRules, 
+  BlockRules, 
+  InlineRules, 
+  Rules
+} from "./Rules.js";
 
 interface Token {
   keyName: string | number;
@@ -53,8 +58,9 @@ export class KeyInterpreter {
   tokens: Array<Token>;
   inlineQueue: Array<Token>;
 
-  constructor() {
-    this.Tokenizer = new Tokenizer();
+  constructor( usersKeys: DefinedKeys = defaultKeys ) {
+    const fullKeys = Object.assign( Object.assign({}, defaultKeys), usersKeys );
+    this.Tokenizer = new Tokenizer( fullKeys );
     this.tokens = [];
     this.inlineQueue = [];
   }
