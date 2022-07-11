@@ -1,31 +1,61 @@
-import { assertEquals, TestsOf } from "utils/test-lib";
-import { Key, keyable } from "../Keys";
+import { defaultKeys, Key, Keyable } from "../Keys.js";
+import { assert, assertEquals, TestsOf } from "./test-lib.js";
 
-// const HeaderPrimaryKey = `${keys[keyable.HeaderPrimaryKey].key}{${keys[keyable.HeaderPrimaryKey].repeated}}` 
-//   || '\-{3}';
-
-TestsOf({
-  'Keyable: Fencing ': function() {
-    assertEquals( 'fencing', keyable.Fencing, 'is key Fence' );
-  },
-  // 'Keyable: HeaderPrimaryKey ': function() {
-  //   assertEquals(6, add(2, 4));
-  //   assertEquals(6.6, add(2.6, 4));
-  // },
+TestsOf("Keyable: ", {
+  'field:         fencing': 
+  [ () => assert( Keyable.Fencing == 'fencing' ), 'has Fencing.' ],
+  'field:   headerPrimary': 
+  [ () => assert( Keyable.HeaderPrimaryKey == 'headerPrimary' ), 'has HeaderPrimaryKey.' ],
+  'field: headerSecondary': 
+  [ () => assert (Keyable.HeaderSecondaryKey == 'headerSecondary' ), 'has HeaderSecondaryKey.' ],
+  'field:       highlight': 
+  [ () => assert( Keyable.Highlight == 'highlight' ), 'has Highlight.' ],
+  'field:            bold': 
+  [ () => assert (Keyable.Bold == 'bold' ), 'has Bold.' ],
+  'field:          redact': 
+  [ () => assert( Keyable.Redact == 'redact' ), 'has Redact.' ],
+  'field:       interrupt': 
+  [ () => assert( Keyable.Interrupt == 'interrupt' ), 'has Interrupt.' ],
+  'field:      HelloWorld': 
+  [ () => assertEquals( Keyable.HelloWorld, "HelloWorld", true ), 'has no helloWorld key.' ],
 });
 
-const key = {
-  [ keyable.Interrupt ] : {
-    key: '\=',
-    repeated: 2,
-  }
+TestsOf("DefinedKeys: ", {
+  'rule:         fencing': 
+  [ () => assertEquals( defaultKeys[Keyable.Fencing].rule, Keyable.Fencing ), 'has Fencing.' ],
+  'rule:   headerPrimary': 
+  [ () => assertEquals( defaultKeys[Keyable.HeaderPrimaryKey].rule, Keyable.HeaderPrimaryKey ), 'has HeaderPrimaryKey.' ],
+  'rule: headerSecondary': 
+  [ () => assertEquals( defaultKeys[Keyable.HeaderSecondaryKey].rule, Keyable.HeaderSecondaryKey ), 'has HeaderSecondaryKey.' ],
+  'rule:       highlight': 
+  [ () => assertEquals( defaultKeys[Keyable.Highlight].rule, Keyable.Highlight ), 'has Highlight.' ],
+  'rule:            bold': 
+  [ () => assertEquals( defaultKeys[Keyable.Bold].rule, Keyable.Bold ), 'has Bold.' ],
+  'rule:          redact': 
+  [ () => assertEquals( defaultKeys[Keyable.Redact].rule, Keyable.Redact ), 'has Redact.' ],
+  'rule:       interrupt': 
+  [ () => assertEquals( defaultKeys[Keyable.Interrupt].rule, Keyable.Interrupt ), 'has Interrupt.' ],
+  'rule:      HelloWorld': 
+  [ () => assertEquals( defaultKeys[Keyable.Highlight].rule, "helloWorld", true ), 'has no helloWorld rule.' ],
+});
+
+const TestKey: Key = {
+  key: '\'',
+  repeated: 5,
+  rule: Keyable.Highlight
 }
 
-TestsOf({
-  'Key has field: key ': function() {
-
-  },
-  'Key has field: repeated ': function() {
-
-  },
+TestsOf("Testing the key creation: ", {
+  'Is TestKey created': 
+  [ () => assertEquals( Object(TestKey).toString(), Object({
+    key: '\'',
+    repeated: 5,
+    rule: Keyable.Highlight
+  }).toString() ), ''],
+  'TestKey has key  \'': 
+  [ () => assertEquals( TestKey.key, '\'' ), ''],
+  'TestKey has rep 5 ': 
+  [ () => assertEquals( TestKey.repeated, 5 ), ''],
+  'TestKey has rule  ': 
+  [ () => assertEquals( TestKey.rule, Keyable.Highlight ), ''],
 });
