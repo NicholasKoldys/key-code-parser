@@ -57,7 +57,7 @@ ___
 5.12 				 		
 5.13			
 5.14   				.
-\`\`\`
+5.15
 5.16
 5.17~~~
 5.28 Fencing 2
@@ -72,13 +72,13 @@ ___
 5.37   \`\`\`
 5.38  ]]] 
 5.39
-5.40 Set inside paragraphs can be \`\`\`highlighted text\`\`\`
-5.41   this is set standard or using \`\`\`~highlight-style personal styles\` default is: \`highlight-style\`\`\`
-5.42     \`\`\`~block-style *block-style should not be seen* personal styles\` 
+5.40 Set inside paragraphs can be \`\`highlighted text\`\`
+5.41   this is set standard or using \`\`~highlight-style personal styles\` default is: \`highlight-style\`\`
+5.42     \`\`~block-style *block-style should not be seen* personal styles\` 
 5.43 \` this is like block style but will cover new lines as well.
 5.44 ;**_BOLDED_:DEFAULT_**; is: 'other styles can be used' .
-5.45 end of style block \`\`\`
-5.46 \`\`\` ~nowork-style_ this is spaced and will not work\`\`\`
+5.45 end of style block \`\`
+5.46 \`\` ~nowork-style_ this is spaced and will not work\`\`
 5.47 ;**_BOLDED_:DEFAULT_**;
 5.48
 5.49 This is text and this will be ;**_BOLDED_**; paragraph after bolded will not be bolded.
