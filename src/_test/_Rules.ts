@@ -93,11 +93,77 @@ TestsOf("Testing Block Rules: ", {
     }, 'only selecting the header text.'],
   'Text groups everything else        ':
     [ () => {
-      const singleLine = "Paragraph text with no starting newline find me @outside.com\n"
-      const preserveSpacing = "\t    \t  spacing and paragraphs with a single newline are captured \n  .... just not the ending the next.... ";
+      const singleLine = "Text with no starting newline find me @outside.com\n"
+      const preserveSpacing = "\t    \t  spacing and text with a single newline are captured \n  .... just not the ending the next.... ";
       assertEquals( BuiltBlockRules['Text'].regex.exec( singleLine )?.groups?.RESULT, 
-        'Paragraph text with no starting newline find me @outside.com\n' );
+        'Text with no starting newline find me @outside.com\n' );
       assertEquals( BuiltBlockRules['Text'].regex.exec( preserveSpacing )?.groups?.RESULT, 
-        '\t    \t  spacing and paragraphs with a single newline are captured \n' );
+        '\t    \t  spacing and text with a single newline are captured \n' );
     }, 'only selecting a single line of text.'],
+});
+
+TestsOf("Testing Inline Rules: ", {
+  'Paragraph       ':
+    [ () => {
+      const justParagraph = "This is some text without a newline as the newline wont be taken.";
+      assertEquals( BuiltInlineRules['Paragraph'].regex.exec( justParagraph )?.groups?.RESULT, 
+        justParagraph );
+    }, 'paragraph line.'],
+  'Paragraph captures multi-lines':
+    [ () => {
+      const pWithNewline = "This is some text with a newline\n continued";
+      const pWithMultilines = "This is some \ntext with some newlines\n \n hello!";
+      const pWithPreSpacing = "     \n\n Even begining spacing.";
+      assertEquals( BuiltInlineRules['Paragraph'].regex.exec( pWithNewline )?.groups?.RESULT, 
+        pWithNewline );
+      assertEquals( BuiltInlineRules['Paragraph'].regex.exec( pWithMultilines )?.groups?.RESULT, 
+        pWithMultilines );
+      assertEquals( BuiltInlineRules['Paragraph'].regex.exec( pWithPreSpacing )?.groups?.RESULT, 
+        pWithPreSpacing );
+    }, 'grab space to preserve.'],
+  'Paragraph FAILIF expecting highlighted/span':
+    [ () => {
+      const pWithMultilines = "This is some highlighted \`\`text with\n a newline\`\`!";
+      assertEquals( BuiltInlineRules['Paragraph'].regex.exec( pWithMultilines )?.groups?.RESULT, 
+        pWithMultilines, true );
+    }, 'only expect pre-highlight.'],
+  'Paragraph expecting pre- highlighted/span':
+    [ () => {
+      const pWithMultilines = "This is some highlighted \`\`text with\n a newline\`\`!";
+      assertEquals( BuiltInlineRules['Paragraph'].regex.exec( pWithMultilines )?.groups?.RESULT, 
+        'This is some highlighted ' );
+    }, 'contains text.'],
+  'Highlight captures RESULT':
+    [ () => {
+      const highlighted = "\`\`highlightedText\`\`"
+      const highlightedResult = "\`\`~thisType highlightedResult\`\`";
+      assertEquals( BuiltInlineRules['Highlight'].regex.exec( highlighted )?.groups?.RESULT, 
+        'highlightedText' );
+      assertEquals( BuiltInlineRules['Highlight'].regex.exec( highlightedResult )?.groups?.RESULT, 
+        'highlightedResult' );
+    }, 'contains text.'],
+  'Highlight captures TYPE':
+    [ () => {
+      const highlightedResult = "\`\`~thisType highlightedResult\`\`";      
+      assertEquals( BuiltInlineRules['Highlight'].regex.exec( highlightedResult )?.groups?.TYPE, 
+        'thisType' );
+    }, 'contains text.'],
+  'Spannable captures RESULT':
+    [ () => {
+      const spanBoldResult = "**spannable Bolded result**";
+      const spanRedactResult = "~~spannable Redacted result~~";
+      assertEquals( BuiltInlineRules['Span'].regex.exec( spanBoldResult )?.groups?.RESULT, 
+        'spannable Bolded result' );
+      assertEquals( BuiltInlineRules['Span'].regex.exec( spanRedactResult )?.groups?.RESULT, 
+        'spannable Redacted result' );
+    }, 'types are read.'],
+  'Spannable captures TYPE':
+    [ () => {
+      const spanBoldResult = "**spannable result**";
+      const spanRedactResult = "~~spannable result~~";
+      assertEquals( BuiltInlineRules['Span'].regex.exec( spanBoldResult )?.groups?.TYPE, 
+        '**' );
+      assertEquals( BuiltInlineRules['Span'].regex.exec( spanRedactResult )?.groups?.TYPE, 
+        '~~' );
+    }, 'types are read.'],
 });
