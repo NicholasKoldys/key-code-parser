@@ -31,7 +31,7 @@ const Caret = /(^|[^\[])\^/g;
 export function regExTemplate(regex: string | RegExp, opt = '') {
   let source = typeof regex === 'string' ? regex : regex.source;
 
-  const RegExObj = {
+  const RegExObj = { 
 
     replace: (positionId: string | RegExp, value: string | RegExp) => {
       let regEx = typeof value === 'string' ? value : value.source;
@@ -73,16 +73,14 @@ export const BlockOrderedRules = function( keys: DefinedKeys ): BlockRules {
   const AllContainedChar = /[\s\S]*?/;
   const EmptySurronding = /\n(?!\s*?\n)/;
 
-  return Object.fromEntries( new Map([
-    // export const BlockOrderedRules: BlockRules = Object.fromEntries(new Map([
-    ['AllowableSpace', { //* allow space before Filetext, and at the end of Filetext.
+  return Object.fromEntries( new Map([ 
+    ['AllowableSpace', {
       regex: regExTemplate(/^(?<RESULT> *?(EndOfLine))/)
         .replace('EndOfLine', EndOfLine)
           .getRegex(),
       hasTokens: false,
     }],
     ['Fencing', {
-      // regex: regExTemplate(/^(?:`{3})(?<RESULT>AllContainedChar%|$)(?:`{3})/)
       regex: regExTemplate(/^(?:FencingKey%)(?<RESULT>AllContainedChar%|$)(?:FencingKey%)/)
         .replace('FencingKey%', FencingKey)
         .replace('AllContainedChar%', AllContainedChar)
@@ -120,7 +118,6 @@ export const BlockOrderedRules = function( keys: DefinedKeys ): BlockRules {
  *  * Map is used to ensure preserved order.
  */
 export const InlineOrderedRules = function( keys: DefinedKeys ): InlineRules {
-// export const InlineOrderedRules: InlineRules = Object.fromEntries(new Map([
 
   const BoldKey = `${keys[Keyable.Bold].key}{${keys[Keyable.Bold].repeated}}`;
   const RedactKey = `${keys[Keyable.Redact].key}{${keys[Keyable.Redact].repeated}}`;
@@ -140,6 +137,8 @@ export const InlineOrderedRules = function( keys: DefinedKeys ): InlineRules {
     .replace('Redact%', RedactKey)
       .getRegex();
 
+      // (\*{2}|\~{2})(\S*?)(\*{2}|\~{2})
+
   return Object.fromEntries(new Map([ 
     ['Paragraph', {
       regex: regExTemplate(/^(?!Highlight%\~?|Spanable%)(?<RESULT>[\s\S]+?|.+?)(?=Highlight%\~?|Spanable%|$)/)
@@ -149,15 +148,14 @@ export const InlineOrderedRules = function( keys: DefinedKeys ): InlineRules {
       hasTokens: false,
     }],
     ['Highlight', {
-      regex: regExTemplate(/(Highlight%)(?:\~(?<TYPE>[\S]+)|)(?<RESULT>[^\`]|[^\`][\s\S]+?)(\1)(?!\`)/)
+      regex: regExTemplate(/(Highlight%)(?:\~(?<TYPE>[\S]+)|)(?: ?)(?<RESULT>[^\`]|[^\`][\s\S]+?)(\1)(?!\`)/)
         .replace('Highlight%', Highlight)
         .getRegex(),
       hasTokens: true,
     }],
     ['Span', {
-      regex: regExTemplate(/(?:SpanableStart%)(?<RESULT>[\s\S]*?)(?:SpanableEnd%)/)
+      regex: regExTemplate(/SpanableStart%(?<RESULT>\S*?)\1/)
         .replace('SpanableStart%', SpanableStart)
-        .replace('SpanableEnd%', SpanableEnd)
         .getRegex(),
       hasTokens: false,
     }],
