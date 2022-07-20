@@ -27,7 +27,7 @@ interface Token {
   text: string;
   depth?: number;
   type?: string;
-  children?: Array<Token>;
+  children?: Array<Token>; //? could be iterable via object
 }
 
 class Tokenizer {
@@ -65,7 +65,7 @@ export class KeyInterpreter {
     this.inlineQueue = [];
   }
 
-  lexar( src: string, rules: BlockRules | InlineRules, parent?: Token, setRule?: number ) {
+  lexalizeFrom( src: string, rules: BlockRules | InlineRules, parent?: Token, setRule?: number ) {
     const keys = Object.keys( rules ) as Array<keyof Rules>;
     const rulesLength = keys.length;
     let parsed: RegExpMatchArray | null;
@@ -110,7 +110,7 @@ export class KeyInterpreter {
           if( orderedRule?.hasTokens ) {
 
             if( 'Paragraph' in rules ) {
-              this.lexar( token.text, rules, token, ( 0 ) );
+              this.lexalizeFrom( token.text, rules, token, ( 0 ) );
 
             } else {
               this.inlineQueue.push( token );
@@ -125,6 +125,7 @@ export class KeyInterpreter {
     }
 
     /*//! IF String then bad parse */
+    //IDK why non-empty ... I followed the rabbit
     src ? console.log("NON-EMPTY RESOLUTION :\n----\n", src ) : null;
   }
 
@@ -136,15 +137,24 @@ export class KeyInterpreter {
 
     src = src.trim();
 
-    this.lexar( src, this.Tokenizer.blockRules );
+    this.lexalizeFrom( src, this.Tokenizer.blockRules );
 
     for(let i = 0; i < this.inlineQueue.length; i++) {
-      this.lexar( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i] );
+      this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i] );
     }
 
     this.inlineQueue = [];
 
     return this.tokens;
+  }
+
+  *getOrderedTokens(): IterableIterator< Token > {
+    for( const parent of this.tokens ) {
+      if( parent?.children )
+        for( const child of parent.children ) {
+          yield child;
+        }
+    }
   }
 
   getStringArray(): Array<string> {
