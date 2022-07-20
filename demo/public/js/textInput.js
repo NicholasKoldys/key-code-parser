@@ -50,40 +50,26 @@ ___
 \`\`\`
 5._6
 5._7
-5._8		.
-5._9 abcdefghijklmnopqrstuvwxyz
-5.10
-5.11 abcdefghijklmnopqrstuvwxyz
-5.12 				 		
-5.13			
-5.14   				.
+5._8
+5._9 [[[
+5.10	 Fencing is user selected 
+5.11	 \` fencing in fence is not allowed. 
+5.12	 and will cause weird string seperation.
+5.13   use highlight instead. \`
+5.14 ]]]
 5.15
-5.16
-5.17~~~
-5.28 Fencing 2
-5.29 block that will enable style default is: 'block-style'
-5.30 abcdefghijklmnopqrstuvwxyz
-5.31~~~
-5.32
-5.33 [[[
-5.34	 Fencing is user selected abcdefghijklmnopqrstuvwxyzabcde 
-5.35	 \`\`\`fencing in fence ignored, 
-5.36	 just print as is
-5.37   \`\`\`
-5.38  ]]] 
-5.39
-5.40 Set inside paragraphs can be \`\`highlighted text\`\`
-5.41   this is set standard or using \`\`~highlight-style personal styles\` default is: \`highlight-style\`\`
-5.42     \`\`~block-style *block-style should not be seen* personal styles\` 
-5.43 \` this is like block style but will cover new lines as well.
-5.44 ;**_BOLDED_:DEFAULT_**; is: 'other styles can be used' .
-5.45 end of style block \`\`
-5.46 \`\` ~nowork-style_ this is spaced and will not work\`\`
-5.47 ;**_BOLDED_:DEFAULT_**;
-5.48
-5.49 This is text and this will be ;**_BOLDED_**; paragraph after bolded will not be bolded.
-5.50 This will contain a link [(link to here)"the text in quotes should be selectable"]
-EOF Treat all symbols in redacted double as crossed out not hidden ;~~_redacted text_~~;
+5.16 Set inside paragraphs can be \`\`highlighted text\`\`
+5.17   this is set standard or using \`\`~highlight-style personal styles\` default is: \`highlight-style\`\`
+5.18     \`\`~block-style *block-style should not be seen* personal styles\` 
+5.19 \` this is like block style but will cover new lines as well.
+5.20 **BOLDED_:1** is: 'other styles can be used' .
+5.21 end of style block \`\`
+5.22 \`\` ~nowork-style_ this is spaced and will not work\`\`
+5.23 **BOLDED_:2**
+5.24
+5.25 This is text and this will be, **BOLDED:3**; paragraph after bolded will not be bolded.
+5.26 This will contain a link [(link to here)"the text in quotes should be selectable"]
+EOF Treat all symbols in redacted double as crossed out not hidden ~~redactedtext~~
 `;
 
 MDEditor.value = rawInput;
@@ -95,9 +81,15 @@ function parseBlocks(MDEditorVal) {
     const interpretter = new KeyInterpreter();
       interpretter.parse(MDEditorVal);
 
-    interpretter.getStringArray().forEach( val => {
-      // console.log(val);
-    })
+    interpretter.tokens.forEach( (parent) => {
+      console.log(parent);
+      if(parent?.children?.length > 0 ) 
+        parent?.children.forEach( (child) => {
+          console.log(child);
+        });
+
+      if(parent?.text == '') console.error(parent);
+    });
 
     return interpretter.getStringArray();
 
