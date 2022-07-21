@@ -62,49 +62,41 @@ export const BlockOrderedRules = function( keys: DefinedKeys ): BlockRules {
   const HeaderSecondaryKey = `${keys[Keyable.HeaderSecondaryKey].key}{${keys[Keyable.HeaderPrimaryKey].repeated}}`;
 
   const EndOfLine = /\n|$/;
-  const AnyEnding = regExTemplate(/(?:EndOfLine%)/)
+  const AllowableSpace = regExTemplate(/ *?(EndOfLine%)/)
     .replace('EndOfLine%', EndOfLine)
       .getRegex();
-  const AllowableSpace = regExTemplate(/( *?(EndOfLine%))/)
-    .replace('EndOfLine%', EndOfLine)
-      .getRegex();
-  const AllCharInLine = /[^\n]/;
-  const MustCharLine = /.+\n/;
+  const AllCharInLine = /[^\n]+/;
   const AllContainedChar = /[\s\S]*?/;
   const EmptySurronding = /\n(?!\s*?\n)/;
+  const SectionHeader = regExTemplate(/HeaderPrimaryKey%|HeaderSecondaryKey%/)
+    .replace('HeaderPrimaryKey%', HeaderPrimaryKey)
+    .replace('HeaderSecondaryKey%', HeaderSecondaryKey)
+    .getRegex();
 
   return Object.fromEntries( new Map([ 
     ['AllowableSpace', {
-      regex: regExTemplate(/^(?<RESULT> *?(EndOfLine))/)
-        .replace('EndOfLine', EndOfLine)
+      regex: regExTemplate(/^(?<RESULT>AllowableSpace%)/)
+        .replace('AllowableSpace%', AllowableSpace)
           .getRegex(),
       hasTokens: false,
     }],
     ['Fencing', {
-      regex: regExTemplate(/^(?:FencingKey%)(?<RESULT>AllContainedChar%|$)(?:FencingKey%)/)
+      regex: regExTemplate(/^(?<TYPE>FencingKey%)(?<RESULT>AllContainedChar%|$)(?:FencingKey%)/)
         .replace('FencingKey%', FencingKey)
         .replace('AllContainedChar%', AllContainedChar)
           .getRegex(),
       hasTokens: true,
     }],
-    ['Heading1Sect', {
-      regex: regExTemplate(/^(?<RESULT>EmptySurronding%|.+\n)(?:HeaderPrimaryKey%)AnyEnding%/)
-        .replace('HeaderPrimaryKey%', HeaderPrimaryKey)
+    ['HeadingSect', {
+      regex: regExTemplate(/^(?<RESULT>EmptySurronding%|.+\n)(?<TYPE>SectionHeader%)(?:EndOfLine%)/)
+        .replace('SectionHeader%', SectionHeader)
         .replace('EmptySurronding%', EmptySurronding)
-        .replace('AnyEnding%', AnyEnding)
-          .getRegex(),
-      hasTokens: false,
-    }],
-    ['Heading2Sect', {
-      regex: regExTemplate(/^(?<RESULT>EmptySurronding%|.+\n)(?:HeaderSecondaryKey%)AnyEnding%/)//equals sign
-        .replace('HeaderSecondaryKey%', HeaderSecondaryKey)
-        .replace('EmptySurronding%', EmptySurronding)
-        .replace('AnyEnding%', AnyEnding)
+        .replace('EndOfLine%', EndOfLine)
           .getRegex(),
       hasTokens: false,
     }],
     ['Text', {
-      regex: regExTemplate(/^(?<RESULT>AllCharInLine%+AllowableSpace%)/)
+      regex: regExTemplate(/^(?<RESULT>AllCharInLine%AllowableSpace%)/)
         .replace('AllowableSpace%', AllowableSpace)
         .replace('AllCharInLine%', AllCharInLine)
           .getRegex(),
@@ -122,40 +114,32 @@ export const InlineOrderedRules = function( keys: DefinedKeys ): InlineRules {
   const BoldKey = `${keys[Keyable.Bold].key}{${keys[Keyable.Bold].repeated}}`;
   const RedactKey = `${keys[Keyable.Redact].key}{${keys[Keyable.Redact].repeated}}`;
   const InterruptKey = `${keys[Keyable.Interrupt].key}{${keys[Keyable.Interrupt].repeated}}`;
-  const Highlight = `${keys[Keyable.Highlight].key}{${keys[Keyable.Highlight].repeated}}`;
+  const HighlightKey = `${keys[Keyable.Highlight].key}{${keys[Keyable.Highlight].repeated}}`;
 
-  const Spanable = regExTemplate(/(Bold%|Redact%)/)
+  const Spanable = regExTemplate(/Bold%|Redact%/)
     .replace('Bold%', BoldKey)
     .replace('Redact%', RedactKey)
     .getRegex();
-  const SpanableStart = regExTemplate(/(?<TYPE>Bold%|Redact%)/)
-    .replace('Bold%', BoldKey)
-    .replace('Redact%', RedactKey)
-      .getRegex();
-  const SpanableEnd = regExTemplate(/(Bold%|Redact%)/)
-    .replace('Bold%', BoldKey)
-    .replace('Redact%', RedactKey)
-      .getRegex();
 
       // (\*{2}|\~{2})(\S*?)(\*{2}|\~{2})
 
   return Object.fromEntries(new Map([ 
-    ['Paragraph', {
-      regex: regExTemplate(/^(?!Highlight%\~?|Spanable%)(?<RESULT>[\s\S]+?|.+?)(?=Highlight%\~?|Spanable%|$)/)
+    ['Paragraph', { //TODO for para - need someway to scan for false flags like 3~ instead of 2~ bc 2 is allowed but three isnt
+      regex: regExTemplate(/^(?!HighlightKey%|Spanable%)(?<RESULT>[\s\S]*?)(?=HighlightKey%|Spanable%|$)/)
         .replace('Spanable%', Spanable)
-        .replace('Highlight%', Highlight)
+        .replace('HighlightKey%', HighlightKey)
         .getRegex(),
       hasTokens: false,
     }],
     ['Highlight', {
-      regex: regExTemplate(/(Highlight%)(?:\~(?<TYPE>[\S]+)|)(?: ?)(?<RESULT>[^\`]|[^\`][\s\S]+?)(\1)(?!\`)/)
-        .replace('Highlight%', Highlight)
+      regex: regExTemplate(/(HighlightKey%)(?:\~(?<TYPE>\S*) ?|)(?<RESULT>[\s\S]*?)(\1)/)
+        .replace('HighlightKey%', HighlightKey)
         .getRegex(),
       hasTokens: true,
     }],
     ['Span', {
-      regex: regExTemplate(/SpanableStart%(?<RESULT>\S*?)\1/)
-        .replace('SpanableStart%', SpanableStart)
+      regex: regExTemplate(/(?<TYPE>Spanable%)(?<RESULT>[\s\S]*?)\1/)
+        .replace('Spanable%', Spanable)
         .getRegex(),
       hasTokens: false,
     }],
