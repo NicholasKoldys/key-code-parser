@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { KeyInterpreter } from "../../../dist/Parser.js";
+import { KeyCodeParser } from "../../../dist/KeyCodeParser.js";
 
 /**
  * @type {HTMLTextAreaElement}
@@ -78,10 +78,10 @@ function parseBlocks(MDEditorVal) {
   try {
     if (!MDEditorVal) throw (new Error('emptyEditorVal'));
 
-    const interpretter = new KeyInterpreter();
-      interpretter.parse(MDEditorVal);
+    const parser = new KeyCodeParser();
+      parser.parse(MDEditorVal);
 
-    interpretter.tokens.forEach( (parent) => {
+    parser.tokens.forEach( (parent) => {
       console.log(parent);
       if(parent?.children?.length > 0 ) 
         parent?.children.forEach( (child) => {
@@ -91,7 +91,7 @@ function parseBlocks(MDEditorVal) {
       if(parent?.text == '') console.error(parent);
     });
 
-    return interpretter.getStringArray();
+    return parser.getStringArray();
 
   } catch (e) {
     console.error(e);
