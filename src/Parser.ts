@@ -12,14 +12,14 @@ History
 2024/10/18 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-import { defaultKeys, DefinedKeys } from "./Keys.js";
+import { defaultKeys, DefinedKeys } from "./Keys";
 import { 
   BlockOrderedRules, 
   InlineOrderedRules, 
   BlockRules, 
   InlineRules, 
   Rules
-} from "./Rules.js";
+} from "./Rules";
 
 interface Token {
   keyName: string | number;
@@ -53,19 +53,24 @@ class Tokenizer {
   }
 }
 
-export class KeyInterpreter {
+class KeyInterpreter {
   Tokenizer: Tokenizer;
   tokens: Array<Token>;
   inlineQueue: Array<Token>;
 
-  constructor( usersKeys: DefinedKeys = defaultKeys ) {
+  constructor( usersKeys: DefinedKeys = defaultKeys, tokenArray: Array<Token> ) {
     const fullKeys = Object.assign( Object.assign({}, defaultKeys), usersKeys );
     this.Tokenizer = new Tokenizer( fullKeys );
-    this.tokens = [];
+    this.tokens = tokenArray;
     this.inlineQueue = [];
   }
 
-  lexalizeFrom( src: string, rules: BlockRules | InlineRules, parent?: Token, setRule?: number ) {
+  lexalizeFrom( 
+    src: string, 
+    rules: BlockRules | InlineRules = this.Tokenizer.blockRules, 
+    parent?: Token, 
+    setRule?: number 
+  ) {
     const keys = Object.keys( rules ) as Array<keyof Rules>;
     const rulesLength = keys.length;
     let parsed: RegExpMatchArray | null;
@@ -124,26 +129,31 @@ export class KeyInterpreter {
       }
     }
 
-    /*//! IF String then bad parse */
-    //IDK why non-empty ... I followed the rabbit
-    src ? console.log("NON-EMPTY RESOLUTION :\n----\n", src ) : null;
+    if('TextBlock' in rules) {
+      for(let i = 0; i < this.inlineQueue.length; i++) {
+        this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i] );
+      }
+    }
+  }
+}
+
+export class KeyCodeParser {
+
+  public tokens: Array<Token>;
+  private interpretter: KeyInterpreter;
+
+  constructor( userKeys?: DefinedKeys) {
+    this.tokens = [];
+    this.interpretter = new KeyInterpreter( userKeys, this.tokens );
   }
 
   parse( src: string, options?: Object ): Array<Token> {
 
     if(this.tokens.length > 0) this.tokens = [];
 
-    if(this.inlineQueue.length > 0) this.inlineQueue = [];
-
     src = src.trim();
 
-    this.lexalizeFrom( src, this.Tokenizer.blockRules );
-
-    for(let i = 0; i < this.inlineQueue.length; i++) {
-      this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i] );
-    }
-
-    this.inlineQueue = [];
+    this.interpretter.lexalizeFrom( src );
 
     return this.tokens;
   }
@@ -177,7 +187,7 @@ export class KeyInterpreter {
     return stringArray;
   }
 
-  private iterateTokens( callback: Function, tokenArray?: Array<Token> ) {
+  iterateTokens( callback: Function, tokenArray?: Array<Token> ) {
 
     if( !tokenArray ) tokenArray = this.tokens;
 
@@ -192,12 +202,3 @@ export class KeyInterpreter {
     }
   }
 }
-
-/* export class KeyCodeParserFactory {
-  constructor( tokens: Array<Key> ) {
-
-  }
-}
-export default class KeyCodeParser {
-
-} */
