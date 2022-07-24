@@ -6,10 +6,12 @@
   "private": "true",
   "sideEffects": "true",
   "scripts": {
+    "genLib:bundle": "pnpm exec tsc --declaration ./dist/KeyCodeParser.js --allowJs",
+    "genLib:full": "pnpm exec tsc --declaration --declarationDir ./src/lib --declarationMap --emitDeclarationOnly",
     "watch:ts": "pnpm exec tsc --watch",
     "watch:node": "pnpm exec node --test --watch",
     "build:js": "pnpm exec tsc -p ./tsconfig.json",
-    "build:pack": "pnpm exec webpack --config=webpack.config.js",
+    "build:dist": "pnpm exec webpack --config=webpack.config.js",
     "pretest": "pnpm run build:dist",
     "test": "pnpm exec node --test \"./dist/_test/**/*.test.js\"",
     "prestart": "pnpm run test",
