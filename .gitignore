@@ -11,3 +11,6 @@
 !.gitignore
 !package.json
 !tsconfig.json
+
+# EXCEPTIONS
+src/lib/**/*
