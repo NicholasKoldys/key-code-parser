@@ -32,6 +32,14 @@ export type DefinedKeys = {
   [keyableName: string]: Key;
 };
 
+export function mapToKeyable( ...keys: Array<Key> ) {
+  const keyMap = new Map();
+  for( let i = 0; i < keys.length; i++ ) {
+    keyMap.set( keys[i].rule, keys[i] );
+  }
+  return Object.fromEntries( keyMap );
+}
+
 export const defaultKeys: DefinedKeys = Object.fromEntries(
   new Map([
     [
