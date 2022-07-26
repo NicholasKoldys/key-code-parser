@@ -28,7 +28,7 @@ export type InlineRules = {
 
 const Caret = /(^|[^\[])\^/g;
 
-export function regExTemplate(regex: string | RegExp, opt = "") {
+function regExTemplate(regex: string | RegExp, opt = "") {
   let source = typeof regex === "string" ? regex : regex.source;
 
   const RegExObj = {
