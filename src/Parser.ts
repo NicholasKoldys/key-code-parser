@@ -12,7 +12,7 @@ History
 2024/10/18 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-import { defaultKeys, DefinedKeys } from "./Keys";
+import { defaultKeys, DefinedKeys, Key, mapToKeyable } from "./Keys";
 import { 
   BlockOrderedRules, 
   InlineOrderedRules, 
@@ -21,7 +21,7 @@ import {
   Rules
 } from "./Rules";
 
-interface Token {
+export interface Token {
   keyName: string | number;
   raw: string;
   text: string;
@@ -39,7 +39,7 @@ class Tokenizer {
     this.inlineRules = InlineOrderedRules( keys );
   }
 
-  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, token?: Token ): Token {    
+  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, depth: number, token?: Token ): Token {    
     const result = parsedStr?.groups ? ( parsedStr.groups?.RESULT || 'null' ) : parsedStr[1];
     const type = parsedStr?.groups ? ( parsedStr.groups?.TYPE || 'null' ) : '';
 
@@ -47,7 +47,7 @@ class Tokenizer {
       keyName: ruleName,
       raw: token ? (token?.raw || '') + parsedStr[0] : parsedStr[0],
       text: token ? (token?.text || '') + ( result || '') : ( result || '' ),
-      depth: 0,
+      depth: depth,
       type: type,
     }
   }
@@ -58,7 +58,10 @@ class KeyInterpreter {
   tokens: Array<Token>;
   inlineQueue: Array<Token>;
 
-  constructor( usersKeys: DefinedKeys = defaultKeys, tokenArray: Array<Token> ) {
+  constructor( usersKeys: DefinedKeys | Array<Key> = defaultKeys, tokenArray: Array<Token> ) {
+    if( Array.isArray( usersKeys ) ) {
+      usersKeys = mapToKeyable( ...usersKeys );
+    }
     const fullKeys = Object.assign( Object.assign({}, defaultKeys), usersKeys );
     this.Tokenizer = new Tokenizer( fullKeys );
     this.tokens = tokenArray;
@@ -69,11 +72,13 @@ class KeyInterpreter {
     src: string, 
     rules: BlockRules | InlineRules = this.Tokenizer.blockRules, 
     parent?: Token, 
-    setRule?: number 
+    setRule?: number, 
+    currentDepth?: number
   ) {
     const keys = Object.keys( rules ) as Array<keyof Rules>;
     const rulesLength = keys.length;
     let parsed: RegExpMatchArray | null;
+    let depthCount = currentDepth || 0;
 
     for(let b = setRule || 0; b < rulesLength; b++) {
       const iterRule = keys[b];
@@ -96,26 +101,26 @@ class KeyInterpreter {
           }
 
           //* get the last token for possible concatenation.
-          const lastIter = tokenArray.length - 1;
-          const prevToken = tokenArray[ lastIter >= 0 || lastIter != undefined ? lastIter : 0 ];
+          const lastIter = tokenArray?.length - 1 || 0;
+          const prevToken = tokenArray[ lastIter >= 0 ? lastIter : 0 ];
 
           //* Remove previous token + combine to make singular concatentaed token.
           if(prevToken && (prevToken.keyName == iterRule)) {
-            token = this.Tokenizer.tokenize( parsed, iterRule, prevToken);
+            token = this.Tokenizer.tokenize( parsed, iterRule, depthCount, prevToken);
             tokenArray.pop();
 
             //* if the rule can have child tokens, remove the previous parsable entry as we are going to create a new one.
             if( orderedRule?.hasTokens ) this.inlineQueue.pop();
 
           } else {
-            token = this.Tokenizer.tokenize( parsed, iterRule );
+            token = this.Tokenizer.tokenize( parsed, iterRule, depthCount );
           }
 
           //* If parent add to inline loop
           if( orderedRule?.hasTokens ) {
 
             if( 'Paragraph' in rules ) {
-              this.lexalizeFrom( token.text, rules, token, ( 0 ) );
+              this.lexalizeFrom( token.text, rules, token, ( 0 ), ( depthCount + 1 ) );
 
             } else {
               this.inlineQueue.push( token );
@@ -142,7 +147,7 @@ export class KeyCodeParser {
   public tokens: Array<Token>;
   private interpretter: KeyInterpreter;
 
-  constructor( userKeys?: DefinedKeys) {
+  constructor( userKeys?: DefinedKeys | Array<Key> ) {
     this.tokens = [];
     this.interpretter = new KeyInterpreter( userKeys, this.tokens );
   }
@@ -158,7 +163,7 @@ export class KeyCodeParser {
     return this.tokens;
   }
 
-  *getOrderedTokens(): IterableIterator< Token > {
+  *getOrderedChildren(): IterableIterator< Token > {
     for( const parent of this.tokens ) {
       if( parent?.children )
         for( const child of parent.children ) {
@@ -187,7 +192,7 @@ export class KeyCodeParser {
     return stringArray;
   }
 
-  iterateTokens( callback: Function, tokenArray?: Array<Token> ) {
+  iterateTokens( callback: ( t: Token ) => any, tokenArray?: Array<Token> ) {
 
     if( !tokenArray ) tokenArray = this.tokens;
 
