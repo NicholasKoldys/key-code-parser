@@ -13,5 +13,5 @@
     "declaration": true,
     "declarationDir": "./dist/lib",
   },
-  "exclude": [ "node_modules", "util", "./src/_test/**/*" ],
+  "exclude": [ "node_modules", "util/**/*", "./src/_test/**/*", "./dist/**/*" ],
 }
