@@ -39,14 +39,14 @@ class Tokenizer {
     this.inlineRules = InlineOrderedRules( keys );
   }
 
-  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, depth: number, token?: Token ): Token {    
+  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, depth: number, squashToken?: Token ): Token {    
     const result = parsedStr?.groups ? ( parsedStr.groups?.RESULT || 'null' ) : parsedStr[1];
     const type = parsedStr?.groups ? ( parsedStr.groups?.TYPE || 'null' ) : '';
 
     return {
       keyName: ruleName,
-      raw: token ? (token?.raw || '') + parsedStr[0] : parsedStr[0],
-      text: token ? (token?.text || '') + ( result || '') : ( result || '' ),
+      raw: squashToken ? (squashToken?.raw || '') + parsedStr[0] : parsedStr[0],
+      text: squashToken ? (squashToken?.text || '') + ( result || '') : ( result || '' ),
       depth: depth,
       type: type,
     }
@@ -120,7 +120,7 @@ class KeyInterpreter {
           if( orderedRule?.hasTokens ) {
 
             if( 'Paragraph' in rules ) {
-              this.lexalizeFrom( token.text, rules, token, ( 0 ), ( depthCount + 1 ) );
+              this.lexalizeFrom( token.text, rules, token, 0, ( depthCount + 1 ) );
 
             } else {
               this.inlineQueue.push( token );
@@ -136,7 +136,7 @@ class KeyInterpreter {
 
     if('TextBlock' in rules) {
       for(let i = 0; i < this.inlineQueue.length; i++) {
-        this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i] );
+        this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i], 0, 1 );
       }
     }
   }
