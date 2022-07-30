@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", 
+    "module": "ESNext", 
+    // "moduleResolution": "Node", 
+    "moduleResolution": "Bundler", 
+    "lib": [ "ESNext", "DOM" ],
+    "rootDir": "./", 
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "declaration": true,
+    "strict": true,
+  },
+  // "outDir": "../dist/dev",
+  "files": [
+    "Keys.ts"
+  ],
+  "exclude": [ 
+    "utils/**/*", 
+    "_test/**/*", 
+    "lib/**/*" 
+  ],
+}
