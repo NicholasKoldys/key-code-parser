@@ -112,7 +112,7 @@ TestsOf("Testing the key creation: ", {
     "",
   ],
 
-  "TestKey has key =  \\'": [
+  "TestKey has   \\ key \\'": [
     () => assertEquals(TestKey.key, "'"),
     ""
   ],
