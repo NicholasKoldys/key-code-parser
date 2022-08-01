@@ -13,11 +13,22 @@ History
   Initial creation.
  */
 import { DefinedKeys, Keyable } from "./Keys";
+import { regExTemplate } from "./RegEx";
 
 export type Rules = {
   regex: RegExp;
   hasTokens: boolean;
 };
+
+export enum Ruleable {
+  AllowableSpace = "AllowableSpace",
+  Fencing = "Fencing",
+  HeadingSect = "HeadingSect",
+  TextBlock = "TextBlock",
+  Paragraph = "Paragraph",
+  Highlight = "Highlight",
+  Span = "Span",
+}
 
 export type BlockRules = {
   [key: string]: Rules;
@@ -25,27 +36,6 @@ export type BlockRules = {
 export type InlineRules = {
   [key: string]: Rules;
 };
-
-const Caret = /(^|[^\[])\^/g;
-
-function regExTemplate(regex: string | RegExp, opt = "") {
-  let source = typeof regex === "string" ? regex : regex.source;
-
-  const RegExObj = {
-    replace: (positionId: string | RegExp, value: string | RegExp) => {
-      let regEx = typeof value === "string" ? value : value.source;
-      regEx = regEx.replace(Caret, "$1");
-      source = source.replaceAll(positionId, regEx);
-      return RegExObj;
-    },
-
-    getRegex: () => {
-      return new RegExp(source, opt);
-    },
-  };
-
-  return RegExObj;
-}
 
 /**
  * Sorted List of Rules most sectionable to least.
@@ -88,7 +78,7 @@ export const BlockOrderedRules = function (keys: DefinedKeys): BlockRules {
   return Object.fromEntries(
     new Map([
       [
-        "AllowableSpace",
+        Ruleable.AllowableSpace,
         {
           regex: regExTemplate(/^(?<RESULT>AllowableSpace%)/)
             .replace("AllowableSpace%", AllowableSpace)
@@ -97,7 +87,7 @@ export const BlockOrderedRules = function (keys: DefinedKeys): BlockRules {
         },
       ],
       [
-        "Fencing",
+        Ruleable.Fencing,
         {
           regex: regExTemplate(
             /^(?<TYPE>FencingKey%)(?<RESULT>AllContainedChar%|$)(?:FencingKey%)/
@@ -109,7 +99,7 @@ export const BlockOrderedRules = function (keys: DefinedKeys): BlockRules {
         },
       ],
       [
-        "HeadingSect",
+        Ruleable.HeadingSect,
         {
           regex: regExTemplate(
             /^(?<RESULT>EmptySurronding%|.+\n)(?<TYPE>SectionHeader%)(?:EndOfLine%)/
@@ -122,7 +112,7 @@ export const BlockOrderedRules = function (keys: DefinedKeys): BlockRules {
         },
       ],
       [
-        "TextBlock",
+        Ruleable.TextBlock,
         {
           regex: regExTemplate(/^(?<RESULT>AllCharInLine%AllowableSpace%)/)
             .replace("AllowableSpace%", AllowableSpace)
@@ -173,7 +163,7 @@ export const InlineOrderedRules = function (keys: DefinedKeys): InlineRules {
   return Object.fromEntries(
     new Map([
       [
-        "Paragraph",
+        Ruleable.Paragraph,
         {
           //TODO for para - need someway to scan for false flags like 3~ instead of 2~ bc 2 is allowed but three isnt
           regex: regExTemplate(
@@ -186,7 +176,7 @@ export const InlineOrderedRules = function (keys: DefinedKeys): InlineRules {
         },
       ],
       [
-        "Highlight",
+        Ruleable.Highlight,
         {
           regex: regExTemplate(
             /(HighlightKey%)(?:\~(?<TYPE>\S*) ?|)(?<RESULT>[\s\S]*?)(\1)/
@@ -197,7 +187,7 @@ export const InlineOrderedRules = function (keys: DefinedKeys): InlineRules {
         },
       ],
       [
-        "Span",
+        Ruleable.Span,
         {
           regex: regExTemplate(/(?<TYPE>Spanable%)(?<RESULT>[\s\S]*?)\1/)
             .replace("Spanable%", Spanable)
