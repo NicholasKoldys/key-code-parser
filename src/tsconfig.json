@@ -15,9 +15,6 @@
     "strict": true,
   },
   // "outDir": "../dist/dev",
-  "files": [
-    "Keys.ts"
-  ],
   "exclude": [ 
     "utils/**/*", 
     "_test/**/*", 

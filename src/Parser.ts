@@ -12,20 +12,21 @@ History
 2024/10/18 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-import { defaultKeys, DefinedKeys, Key, mapToKeyable } from "./Keys";
+import { defaultKeys, DefinedKeys, Key, Keyable, mapToKeyable } from "./Keys";
 import { 
   BlockOrderedRules, 
   InlineOrderedRules, 
   BlockRules, 
   InlineRules, 
-  Rules
+  Rules,
+  Ruleable
 } from "./Rules";
 
 export interface Token {
   keyName: string | number;
   raw: string;
   text: string;
-  depth?: number;
+  depth: number;
   type?: string;
   children?: Array<Token>; //? could be iterable via object
 }
@@ -39,9 +40,13 @@ class Tokenizer {
     this.inlineRules = InlineOrderedRules( keys );
   }
 
-  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, depth: number, squashToken?: Token ): Token {    
+  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, depth: number, squashToken?: Token ): Token {
     const result = parsedStr?.groups ? ( parsedStr.groups?.RESULT || 'null' ) : parsedStr[1];
     const type = parsedStr?.groups ? ( parsedStr.groups?.TYPE || 'null' ) : '';
+
+    if( ruleName == Ruleable.Span && !parsedStr?.groups?.RESULT) {
+      console.log( 'Span: ', ruleName, parsedStr?.groups?.RESULT);
+    }
 
     return {
       keyName: ruleName,
@@ -119,7 +124,7 @@ class KeyInterpreter {
           //* If parent add to inline loop
           if( orderedRule?.hasTokens ) {
 
-            if( 'Paragraph' in rules ) {
+            if( Ruleable.Paragraph in rules ) {
               this.lexalizeFrom( token.text, rules, token, 0, ( depthCount + 1 ) );
 
             } else {
@@ -134,7 +139,7 @@ class KeyInterpreter {
       }
     }
 
-    if('TextBlock' in rules) {
+    if(Ruleable.TextBlock in rules) {
       for(let i = 0; i < this.inlineQueue.length; i++) {
         this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i], 0, 1 );
       }
