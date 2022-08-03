@@ -13,12 +13,17 @@ History
   Initial creation.
  */
 import { DefinedKeys, Keyable } from "./Keys";
-import { regExTemplate } from "./RegEx";
+import { RegexTemplate } from "./RegexTemplate";
 
 export type Rules = {
-  regex: RegExp;
+  patterns: RegexTemplate;
   hasTokens: boolean;
 };
+
+export enum GroupsNames {
+  TYPE = "TYPE",
+  RESULT = "RESULT"
+}
 
 export enum Ruleable {
   AllowableSpace = "AllowableSpace",
@@ -64,60 +69,64 @@ export const BlockOrderedRules = function (keys: DefinedKeys): BlockRules {
   }}`;
 
   const EndOfLine = /\n|$/;
-  const AllowableSpace = regExTemplate(/ *?(EndOfLine%)/)
+  const AllowableSpaceTemplate = new RegexTemplate(/ *?(EndOfLine%)/)
     .replace("EndOfLine%", EndOfLine)
-    .getRegex();
+    .createRegex();
   const AllCharInLine = /[^\n]+/;
   const AllContainedChar = /[\s\S]*?/;
   const EmptySurronding = /\n(?!\s*?\n)/;
-  const SectionHeader = regExTemplate(/HeaderPrimaryKey%|HeaderSecondaryKey%/)
+  const SectionHeaderTemplate = new RegexTemplate(/HeaderPrimaryKey%|HeaderSecondaryKey%/)
     .replace("HeaderPrimaryKey%", HeaderPrimaryKey)
     .replace("HeaderSecondaryKey%", HeaderSecondaryKey)
-    .getRegex();
+    .createRegex();
 
   return Object.fromEntries(
     new Map([
       [
         Ruleable.AllowableSpace,
         {
-          regex: regExTemplate(/^(?<RESULT>AllowableSpace%)/)
-            .replace("AllowableSpace%", AllowableSpace)
-            .getRegex(),
+          patterns: new RegexTemplate(
+            /^(?<RESULT>AllowableSpace%)/
+          )
+            .replace("AllowableSpace%", AllowableSpaceTemplate.regex)
+            .createRegex( { [GroupsNames.RESULT] : 1 } ),
           hasTokens: false,
         },
       ],
       [
         Ruleable.Fencing,
         {
-          regex: regExTemplate(
+          patterns: new RegexTemplate(
             /^(?<TYPE>FencingKey%)(?<RESULT>AllContainedChar%|$)(?:FencingKey%)/
           )
             .replace("FencingKey%", FencingKey)
             .replace("AllContainedChar%", AllContainedChar)
-            .getRegex(),
+            .createRegex( { [GroupsNames.TYPE] : 1, [GroupsNames.RESULT] : 2 } ),
           hasTokens: true,
         },
       ],
       [
         Ruleable.HeadingSect,
         {
-          regex: regExTemplate(
+          patterns: new RegexTemplate(
             /^(?<RESULT>EmptySurronding%|.+\n)(?<TYPE>SectionHeader%)(?:EndOfLine%)/
           )
-            .replace("SectionHeader%", SectionHeader)
+            .replace("SectionHeader%", SectionHeaderTemplate.regex)
             .replace("EmptySurronding%", EmptySurronding)
             .replace("EndOfLine%", EndOfLine)
-            .getRegex(),
+            .createRegex( { [GroupsNames.RESULT] : 1, [GroupsNames.TYPE] : 2 } ),
           hasTokens: false,
         },
       ],
       [
         Ruleable.TextBlock,
         {
-          regex: regExTemplate(/^(?<RESULT>AllCharInLine%AllowableSpace%)/)
-            .replace("AllowableSpace%", AllowableSpace)
+          patterns: new RegexTemplate(
+            /^(?<RESULT>AllCharInLine%AllowableSpace%)/
+          )
+            .replace("AllowableSpace%", AllowableSpaceTemplate.regex)
             .replace("AllCharInLine%", AllCharInLine)
-            .getRegex(),
+            .createRegex( { [GroupsNames.RESULT] : 1 } ),
           hasTokens: true,
         },
       ],
@@ -155,10 +164,10 @@ export const InlineOrderedRules = function (keys: DefinedKeys): InlineRules {
     keys[Keyable.Highlight].repeated
   }}`;
 
-  const Spanable = regExTemplate(/Bold%|Redact%/)
+  const SpanableTemplate =  new RegexTemplate(/Bold%|Redact%/)
     .replace("Bold%", BoldKey)
     .replace("Redact%", RedactKey)
-    .getRegex();
+    .createRegex();
 
   return Object.fromEntries(
     new Map([
@@ -166,32 +175,34 @@ export const InlineOrderedRules = function (keys: DefinedKeys): InlineRules {
         Ruleable.Paragraph,
         {
           //TODO for para - need someway to scan for false flags like 3~ instead of 2~ bc 2 is allowed but three isnt
-          regex: regExTemplate(
+          patterns: new RegexTemplate(
             /^(?!HighlightKey%|Spanable%)(?<RESULT>[\s\S]*?)(?=HighlightKey%|Spanable%|$)/
           )
-            .replace("Spanable%", Spanable)
+            .replace("Spanable%", SpanableTemplate.regex)
             .replace("HighlightKey%", HighlightKey)
-            .getRegex(),
+            .createRegex( { [GroupsNames.RESULT] : 1 } ),
           hasTokens: false,
         },
       ],
       [
         Ruleable.Highlight,
         {
-          regex: regExTemplate(
+          patterns: new RegexTemplate(
             /(HighlightKey%)(?:\~(?<TYPE>\S*) ?|)(?<RESULT>[\s\S]*?)(\1)/
           )
             .replace("HighlightKey%", HighlightKey)
-            .getRegex(),
+            .createRegex( { [GroupsNames.TYPE] : 2, [GroupsNames.RESULT] : 3 } ),
           hasTokens: true,
         },
       ],
       [
         Ruleable.Span,
         {
-          regex: regExTemplate(/(?<TYPE>Spanable%)(?<RESULT>[\s\S]*?)\1/)
-            .replace("Spanable%", Spanable)
-            .getRegex(),
+          patterns: new RegexTemplate(
+            /(?<TYPE>Spanable%)(?<RESULT>[\s\S]*?)\1/
+          )
+            .replace("Spanable%", SpanableTemplate.regex)
+            .createRegex( { [GroupsNames.TYPE] : 1, [GroupsNames.RESULT] : 2 } ),
           hasTokens: false,
         },
       ],
