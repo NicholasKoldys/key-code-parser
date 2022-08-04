@@ -12,7 +12,8 @@ History
 2024/10/18 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-import { defaultKeys, DefinedKeys, Key, Keyable, mapToKeyable } from "./Keys";
+import { defaultKeys, DefinedKeys, Key, mapToKeyable } from "./Keys";
+import { Groups } from "./RegexTemplate.js";
 import { 
   BlockOrderedRules, 
   InlineOrderedRules, 
@@ -40,13 +41,13 @@ class Tokenizer {
     this.inlineRules = InlineOrderedRules( keys );
   }
 
-  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, depth: number, squashToken?: Token ): Token {
-    const result = parsedStr?.groups ? ( parsedStr.groups?.RESULT || 'null' ) : parsedStr[1];
-    const type = parsedStr?.groups ? ( parsedStr.groups?.TYPE || 'null' ) : '';
-
-    if( ruleName == Ruleable.Span && !parsedStr?.groups?.RESULT) {
-      console.log( 'Span: ', ruleName, parsedStr?.groups?.RESULT);
-    }
+  tokenize( parsedStr: RegExpMatchArray, ruleName: string | number, groups: Groups, depth: number, squashToken?: Token ): Token {
+    const result = parsedStr?.groups 
+      ? ( parsedStr.groups?.RESULT || parsedStr[ groups.RESULT ] || 'null' ) 
+      : parsedStr[ groups.RESULT ] || parsedStr[1];
+    const type = parsedStr?.groups 
+      ? ( parsedStr.groups?.TYPE || parsedStr[ groups.TYPE ] || 'null' ) 
+      : parsedStr[ groups.TYPE ] || '';
 
     return {
       keyName: ruleName,
@@ -89,7 +90,7 @@ class KeyInterpreter {
       const iterRule = keys[b];
       const orderedRule = rules[ iterRule ];
 
-      if( parsed = orderedRule.regex.exec(src) ) {
+      if( parsed = orderedRule.patterns.regex.exec(src) ) {
 
         if(parsed[0].length > 0) {
           let token: Token;
@@ -111,14 +112,14 @@ class KeyInterpreter {
 
           //* Remove previous token + combine to make singular concatentaed token.
           if(prevToken && (prevToken.keyName == iterRule)) {
-            token = this.Tokenizer.tokenize( parsed, iterRule, depthCount, prevToken);
+            token = this.Tokenizer.tokenize( parsed, iterRule, orderedRule.patterns.groups, depthCount, prevToken);
             tokenArray.pop();
 
             //* if the rule can have child tokens, remove the previous parsable entry as we are going to create a new one.
             if( orderedRule?.hasTokens ) this.inlineQueue.pop();
 
           } else {
-            token = this.Tokenizer.tokenize( parsed, iterRule, depthCount );
+            token = this.Tokenizer.tokenize( parsed, iterRule, orderedRule.patterns.groups, depthCount );
           }
 
           //* If parent add to inline loop
