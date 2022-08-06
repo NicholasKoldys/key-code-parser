@@ -5,6 +5,7 @@
 # ALLOW
 !demo/**/*.*
 !dist/**/*.*
+!media/**/*.*
 !src/**/*.*
 
 !.gitignore

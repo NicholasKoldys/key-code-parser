@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ESNext", 
     "module": "ESNext", 
-    // "moduleResolution": "Node", 
     "moduleResolution": "Bundler", 
     "lib": [ "ESNext", "DOM" ],
     "rootDir": "./", 
@@ -14,10 +13,8 @@
     "declaration": true,
     "strict": true,
   },
-  // "outDir": "../dist/dev",
   "exclude": [ 
     "utils/**/*", 
     "_test/**/*", 
-    "lib/**/*" 
   ],
 }
