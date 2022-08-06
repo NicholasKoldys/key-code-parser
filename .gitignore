@@ -3,14 +3,16 @@
 *.*
 
 # ALLOW
-!src/**/*
-!demo/**/*
-
-!index.js
+!demo/**/*.*
+!dist/**/*.*
+!src/**/*.*
 
 !.gitignore
 !package.json
+!pnpm-lock.yaml
+!README.md
 !tsconfig.json
+!webpack.config.js
 
 # EXCEPTIONS
-src/lib/**/*
+src/omg/dont/show/this/nu6es/**/*

@@ -9,7 +9,7 @@ Constains Tokenizer - Keyinterpreter - KeyParser API
 
 History
 -------
-2024/10/18 - Nicholas.K. - 1.0.0
+2022/07/07 - Nicholas.K. - 1.0.0
   Initial creation.
  */
 import { defaultKeys, DefinedKeys, Key, mapToKeyable } from "./Keys";

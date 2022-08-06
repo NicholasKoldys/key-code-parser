@@ -24,8 +24,7 @@ function regExTempalate is the creator of the
 > BlockOrderedRules : 
 >   - AllowableSpace - which preserves white-space, can be defined by the user.
 >   - Fencing - stylize a block : possibly creating a view/section wrapper
->   - Heading1Sect - seperate heading sections, not inline for possible section creation useful for articles.
->   - Heading2Sect - 
+>   - HeadingSect - seperate heading sections, not inline for possible section creation useful for articles.
 >   - Text - non-specified block located under the following due to ordering, will then be passed to inline.
 Caret is used for creating combined regex into longer rules.
 

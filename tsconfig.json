@@ -4,15 +4,20 @@
     "module": "ESNext", 
     "moduleResolution": "Node", 
     "lib": [ "ESNext", "DOM" ],
-    "rootDir": "./", 
+    "rootDir": "./src", 
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ]
     },
-    "outDir": "../dist/dev",
+    "outDir": "./build",
+    "declaration": true,
+    "declarationDir": "./build/lib",
     "strict": true, 
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
   },
+  "exclude": [ 
+    "node_modules",
+    "build",
+    "dist"
+  ],
 }

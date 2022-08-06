@@ -1,5 +1,17 @@
-const Caret = /(^|[^\[])\^/g;
+/* NicholasKoldys.dev
+All rights reserved (c) 2024
 
+KEY-CODE-PARSER
+
+RegexTemplate.ts/js
+
+Create a wrapper class for Regex Expressions, gives alternate groups availability.
+
+History
+-------
+2022/07/07 - Nicholas.K. - 1.0.0
+  Initial creation.
+ */
 export class RegexTemplate {
   source: string;
   opts: string;
@@ -36,3 +48,5 @@ export class RegexTemplate {
 export type Groups = {
   [ key: string ]: number
 }
+
+const Caret = /(^|[^\[])\^/g;
