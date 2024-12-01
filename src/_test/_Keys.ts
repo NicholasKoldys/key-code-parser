@@ -1,5 +1,5 @@
 import { defaultKeys, Key, Keyable } from "../Keys.js";
-import { assert, assertEquals, TestsOf } from "./test-lib.js";
+import { TestsOf, assertEquals, assert } from "@nicholaskoldys/just-equate-testing";
 
 TestsOf("Keyable: ", {
   "Object Field Sanity   ": [

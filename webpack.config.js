@@ -1,4 +1,4 @@
-import { DeclarationWebpackPlugin, moduleType } from '@nicholaskoldys/declaration-webpack-plugin/DeclarationWebpackPlugin.min.js';
+import { DeclarationWebpackPlugin, moduleType } from '@nicholaskoldys/declaration-webpack-plugin';
 import { resolve } from 'node:path';
 
 const __dirname = import.meta.dirname;
@@ -15,7 +15,7 @@ const webpackConfig = {
     library: {
       type: 'modern-module',
     },
-    path: resolve(__dirname, 'dist'),
+    path: resolve(__dirname, 'lib'),
     clean: true,
   },
 

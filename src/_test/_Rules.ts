@@ -1,6 +1,6 @@
 import { defaultKeys, Keyable } from "../Keys.js";
 import { BlockOrderedRules, InlineOrderedRules } from "../Rules.js";
-import { assert, assertEquals, TestsOf } from "./test-lib.js";
+import { TestsOf, assertEquals, assert } from "@nicholaskoldys/just-equate-testing";
 
 const TestKey = `${defaultKeys[Keyable.Fencing]?.key}{${
   defaultKeys[Keyable.Fencing]?.repeated
@@ -102,11 +102,11 @@ TestsOf("Sanity Checking with spaces: ", {
       const newline = `
 `;
       assertEquals(
-        BuiltBlockRules["AllowableSpace"].regex.exec(allspaces)?.groups?.RESULT,
+        BuiltBlockRules["AllowableSpace"].patterns.regex.exec(allspaces)?.groups?.RESULT,
         allspaces
       );
       assertEquals(
-        BuiltBlockRules["AllowableSpace"].regex.exec(newline)?.groups?.RESULT,
+        BuiltBlockRules["AllowableSpace"].patterns.regex.exec(newline)?.groups?.RESULT,
         "\n"
       );
     },
@@ -119,12 +119,12 @@ TestsOf("Sanity Checking with spaces: ", {
       const newline = `\n
 `;
       assertEquals(
-        BuiltBlockRules["AllowableSpace"].regex.exec(allspaces)?.groups?.RESULT,
+        BuiltBlockRules["AllowableSpace"].patterns.regex.exec(allspaces)?.groups?.RESULT,
         allspaces,
         true
       );
       assertEquals(
-        BuiltBlockRules["AllowableSpace"].regex.exec(newline)?.groups?.RESULT,
+        BuiltBlockRules["AllowableSpace"].patterns.regex.exec(newline)?.groups?.RESULT,
         "\n\n",
         true
       );
@@ -141,16 +141,16 @@ TestsOf("Block Rules: ", {
       const fencingStringX = "```x```";
       const fencingStringWithSpaces = "```x\nx    \nxxxx     \n\nx```";
       assertEquals(
-        BuiltBlockRules["Fencing"].regex.exec(fencingStringNull)?.groups
+        BuiltBlockRules["Fencing"].patterns.regex.exec(fencingStringNull)?.groups
           ?.RESULT,
         ""
       );
       assertEquals(
-        BuiltBlockRules["Fencing"].regex.exec(fencingStringX)?.groups?.RESULT,
+        BuiltBlockRules["Fencing"].patterns.regex.exec(fencingStringX)?.groups?.RESULT,
         "x"
       );
       assertEquals(
-        BuiltBlockRules["Fencing"].regex.exec(fencingStringWithSpaces)?.groups
+        BuiltBlockRules["Fencing"].patterns.regex.exec(fencingStringWithSpaces)?.groups
           ?.RESULT,
         "x\nx    \nxxxx     \n\nx"
       );
@@ -164,12 +164,12 @@ TestsOf("Block Rules: ", {
       const headerOnlyCapture =
         "Heading 1: Title of Section\n---\n\n continuing text after.. ";
       assertEquals(
-        BuiltBlockRules["HeadingSect"].regex.exec(headingSectionKeyOut)?.groups
+        BuiltBlockRules["HeadingSect"].patterns.regex.exec(headingSectionKeyOut)?.groups
           ?.RESULT,
         "Heading 1: Title of Section\n"
       );
       assertEquals(
-        BuiltBlockRules["HeadingSect"].regex.exec(headerOnlyCapture)?.groups
+        BuiltBlockRules["HeadingSect"].patterns.regex.exec(headerOnlyCapture)?.groups
           ?.RESULT,
         "Heading 1: Title of Section\n"
       );
@@ -182,11 +182,11 @@ TestsOf("Block Rules: ", {
       const singleLine = "Text with no starting newline find me @outside.com\n";
       const preserveSpacing = "\t    \t  spacing and text with a single newline are captured \n  .... just not the ending the next.... ";
       assertEquals(
-        BuiltBlockRules["TextBlock"].regex.exec(singleLine)?.groups?.RESULT,
+        BuiltBlockRules["TextBlock"].patterns.regex.exec(singleLine)?.groups?.RESULT,
         "Text with no starting newline find me @outside.com\n"
       );
       assertEquals(
-        BuiltBlockRules["TextBlock"].regex.exec(preserveSpacing)?.groups?.RESULT,
+        BuiltBlockRules["TextBlock"].patterns.regex.exec(preserveSpacing)?.groups?.RESULT,
         "\t    \t  spacing and text with a single newline are captured \n"
       );
     },
@@ -201,7 +201,7 @@ TestsOf("Inline Rules: Paragraph - ", {
       const justParagraph =
         "This is some text without a newline as the newline wont be taken.";
       assertEquals(
-        BuiltInlineRules["Paragraph"].regex.exec(justParagraph)?.groups?.RESULT,
+        BuiltInlineRules["Paragraph"].patterns.regex.exec(justParagraph)?.groups?.RESULT,
         justParagraph
       );
     },
@@ -215,16 +215,16 @@ TestsOf("Inline Rules: Paragraph - ", {
         "This is some \ntext with some newlines\n \n hello!";
       const pWithPreSpacing = "     \n\n Even begining spacing.";
       assertEquals(
-        BuiltInlineRules["Paragraph"].regex.exec(pWithNewline)?.groups?.RESULT,
+        BuiltInlineRules["Paragraph"].patterns.regex.exec(pWithNewline)?.groups?.RESULT,
         pWithNewline
       );
       assertEquals(
-        BuiltInlineRules["Paragraph"].regex.exec(pWithMultilines)?.groups
+        BuiltInlineRules["Paragraph"].patterns.regex.exec(pWithMultilines)?.groups
           ?.RESULT,
         pWithMultilines
       );
       assertEquals(
-        BuiltInlineRules["Paragraph"].regex.exec(pWithPreSpacing)?.groups
+        BuiltInlineRules["Paragraph"].patterns.regex.exec(pWithPreSpacing)?.groups
           ?.RESULT,
         pWithPreSpacing
       );
@@ -237,7 +237,7 @@ TestsOf("Inline Rules: Paragraph - ", {
       const pWithMultilines =
         "This is some highlighted ``text with\n a newline``!";
       assertEquals(
-        BuiltInlineRules["Paragraph"].regex.exec(pWithMultilines)?.groups
+        BuiltInlineRules["Paragraph"].patterns.regex.exec(pWithMultilines)?.groups
           ?.RESULT,
         pWithMultilines,
         true
@@ -251,7 +251,7 @@ TestsOf("Inline Rules: Paragraph - ", {
       const pWithMultilines =
         "This is some highlighted ``text with\n a newline``!";
       assertEquals(
-        BuiltInlineRules["Paragraph"].regex.exec(pWithMultilines)?.groups
+        BuiltInlineRules["Paragraph"].patterns.regex.exec(pWithMultilines)?.groups
           ?.RESULT,
         "This is some highlighted "
       );
@@ -267,12 +267,12 @@ TestsOf("Inline Rules: Highlight - ", {
       const highlightDefault = "``highlighted Text - Hello``";
       const highlightWType = "``~thisType highlighted Result! ~  ``";
       assertEquals(
-        BuiltInlineRules["Highlight"].regex.exec(highlightDefault)?.groups
+        BuiltInlineRules["Highlight"].patterns.regex.exec(highlightDefault)?.groups
           ?.RESULT,
         "highlighted Text - Hello"
       );
       assertEquals(
-        BuiltInlineRules["Highlight"].regex.exec(highlightWType)?.groups
+        BuiltInlineRules["Highlight"].patterns.regex.exec(highlightWType)?.groups
           ?.RESULT,
         "highlighted Result! ~  "
       );
@@ -284,7 +284,7 @@ TestsOf("Inline Rules: Highlight - ", {
     () => {
       const highlightedResult = "``~thisType highlightedResult``";
       assertEquals(
-        BuiltInlineRules["Highlight"].regex.exec(highlightedResult)?.groups
+        BuiltInlineRules["Highlight"].patterns.regex.exec(highlightedResult)?.groups
           ?.TYPE,
         "thisType"
       );
@@ -300,11 +300,11 @@ TestsOf("Spannable Rules: Span - ", {
       const spanBoldResult = "**spannable Bolded result**";
       const spanRedactResult = "~~spannable Redacted result~~";
       assertEquals(
-        BuiltInlineRules["Span"].regex.exec(spanBoldResult)?.groups?.RESULT,
+        BuiltInlineRules["Span"].patterns.regex.exec(spanBoldResult)?.groups?.RESULT,
         "spannable Bolded result"
       );
       assertEquals(
-        BuiltInlineRules["Span"].regex.exec(spanRedactResult)?.groups?.RESULT,
+        BuiltInlineRules["Span"].patterns.regex.exec(spanRedactResult)?.groups?.RESULT,
         "spannable Redacted result"
       );
     },
@@ -316,11 +316,11 @@ TestsOf("Spannable Rules: Span - ", {
       const spanBoldResult = "**spannable result**";
       const spanRedactResult = "~~spannable result~~";
       assertEquals(
-        BuiltInlineRules["Span"].regex.exec(spanBoldResult)?.groups?.TYPE,
+        BuiltInlineRules["Span"].patterns.regex.exec(spanBoldResult)?.groups?.TYPE,
         "**"
       );
       assertEquals(
-        BuiltInlineRules["Span"].regex.exec(spanRedactResult)?.groups?.TYPE,
+        BuiltInlineRules["Span"].patterns.regex.exec(spanRedactResult)?.groups?.TYPE,
         "~~"
       );
     },
