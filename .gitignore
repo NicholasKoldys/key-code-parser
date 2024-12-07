@@ -3,10 +3,10 @@
 *.*
 
 # ALLOW
-!demo/**/*.*
-!dist/**/*.*
-!media/**/*.*
-!src/**/*.*
+!demo/**/*
+!dist/**/*
+!media/**/*
+!src/**/*
 
 !.gitignore
 !package.json

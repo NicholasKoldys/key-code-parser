@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { KeyCodeParser } from "../../../dist/KeyCodeParser.js";
+import { KeyCodeParser } from "../../dist/KeyCodeParser.min.js";
 
 /**
  * @type {HTMLTextAreaElement}
