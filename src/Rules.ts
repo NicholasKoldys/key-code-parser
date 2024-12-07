@@ -12,8 +12,8 @@ History
 2022/07/07 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-import { DefinedKeys, Keyable } from "./Keys";
-import { RegexTemplate } from "./RegexTemplate";
+import { DefinedKeys, Keyable } from "./Keys.js";
+import { RegexTemplate } from "./RegexTemplate.js";
 
 export type Rules = {
   patterns: RegexTemplate;

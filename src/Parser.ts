@@ -12,7 +12,7 @@ History
 2022/07/07 - Nicholas.K. - 1.0.0
   Initial creation.
  */
-import { defaultKeys, DefinedKeys, Key, mapToKeyable } from "./Keys";
+import { defaultKeys, DefinedKeys, Key, mapToKeyable } from "./Keys.js";
 import { Groups } from "./RegexTemplate.js";
 import { 
   BlockOrderedRules, 
@@ -21,7 +21,7 @@ import {
   InlineRules, 
   Rules,
   Ruleable
-} from "./Rules";
+} from "./Rules.js";
 
 export interface Token {
   keyName: string | number;
