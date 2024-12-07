@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "target": "ESNext", 
+    "esModuleInterop": true,
+    "isolatedModules": true, 
     "module": "ESNext", 
-    "moduleResolution": "Node", 
+    "moduleResolution": "bundler", 
     "lib": [ "ESNext", "DOM" ],
     "rootDir": "./src", 
     "paths": {
@@ -10,10 +12,14 @@
         "./*"
       ]
     },
+    "noImplicitAny": true, 
+    "noImplicitThis": true, 
+    "forceConsistentCasingInFileNames": true, 
     "outDir": "./build",
     "declaration": true,
-    "declarationDir": "./build/lib",
-    "strict": true, 
+    "declarationDir": "./build",
+    "strict": true,
+    "skipLibCheck": true, 
   },
   "exclude": [ 
     "node_modules",
