@@ -15,7 +15,7 @@ const webpackConfig = {
     library: {
       type: 'modern-module',
     },
-    path: resolve(__dirname, 'lib'),
+    path: resolve(__dirname, 'dist'),
     clean: true,
   },
 
@@ -35,7 +35,7 @@ const webpackConfig = {
           { 
             loader: 'ts-loader', 
             options: { 
-              configFile: resolve(__dirname, './src/tsconfig.dist.json') 
+              configFile: resolve(__dirname, './src/tsconfig.bundler.json') 
             }
           },
         ]
