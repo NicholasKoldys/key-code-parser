@@ -1,0 +1,20 @@
+# IGNORE ALL
+*/**/*
+*.*
+
+# ALLOW
+!demo/**/*
+!dist/**/*
+!media/**/*
+!src/**/*
+
+!.gitignore
+!package.json
+!pnpm-lock.yaml
+!README.md
+!tsconfig.json
+!webpack.config.js
+
+# EXCEPTIONS
+src/omg/dont/show/this/nu6es/**/*
+node_modules
