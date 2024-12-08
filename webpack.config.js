@@ -25,6 +25,9 @@ const webpackConfig = {
 
   resolve: {
     extensions: [ '.ts', '.js' ],
+    extensionAlias: {
+      '.js': ['.js', '.ts'],
+    },
   },
 
   module: {

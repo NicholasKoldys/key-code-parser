@@ -3,10 +3,12 @@
     "target": "ESNext", 
     "esModuleInterop": true,
     "isolatedModules": true, 
+    "allowSyntheticDefaultImports": true,
     "module": "ESNext", 
-    "moduleResolution": "bundler", 
+    "moduleResolution": "node", 
     "lib": [ "ESNext", "DOM" ],
-    "rootDir": "./src", 
+    "rootDir": "./src",
+    "baseUrl": "./",
     "paths": {
       "@/*": [
         "./*"

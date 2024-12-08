@@ -1,17 +1,21 @@
 {
   "compilerOptions": {
     "target": "ESNext", 
+    "esModuleInterop": true,
+    "isolatedModules": true, 
+    "allowSyntheticDefaultImports": true,
     "module": "ESNext", 
-    "moduleResolution": "Bundler", 
-    "lib": [ "ESNext", "DOM" ],
-    "rootDir": "./", 
+    "moduleResolution": "node", 
+    "lib": [ "ESNext", "DOM" ], 
+    "baseUrl": "./",
     "paths": {
       "@/*": [
         "./*"
       ]
     },
     "declaration": true,
-    "strict": true,
+    "strict": true, 
+    "skipLibCheck": true, 
   },
   "exclude": [ 
     "utils/**/*", 
