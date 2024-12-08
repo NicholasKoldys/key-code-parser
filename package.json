@@ -1,0 +1,59 @@
+{
+  "name": "@nicholaskoldys/key-code-parser",
+  "author": "NicholasKoldys.dev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/DeclarationWebpackPlugin.min.js",
+  "type": "module",
+  "module": "./dist/DeclarationWebpackPlugin.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NicholasKoldys/key-code-parser.git"
+  },
+  "devDependencies": {
+    "@nicholaskoldys/declaration-webpack-plugin": "^1.2.6",
+    "@nicholaskoldys/just-equate-testing": "^1.1.1",
+    "@types/node": "^22.9.1",
+    "css-loader": "^7.1.2",
+    "esbuild": "^0.24.0",
+    "html-loader": "^5.1.0",
+    "html-webpack-plugin": "^5.6.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.3",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
+  },
+  "scripts": {
+    "lock": "pnpm i --lockfile-only",
+    "watch:ts": "pnpm exec tsc --watch",
+    "watch:node": "pnpm exec node --test --watch",
+    "build:ts": "pnpm exec tsc -p ./tsconfig.json",
+    "build:better": "pnpm exec esbuild \"./src/**/*.ts\" --outdir=\"./build\" --tsconfig=tsconfig.json ",
+    "build:dist": "pnpm exec webpack --config=webpack.config.js",
+    "build:mem": "pnpm exec webpack --config=webpack.config.dev.js",
+    "pretest": "pnpm run build:ts && pnpm run build:better",
+    "test": "pnpm exec node --test \"./build/_test/**/*.js\"",
+    "active-test": "pnpm run \"/^watch:.*/\"",
+    "prestart": "pnpm run test",
+    "dev": "pnpm run build:mem",
+    "start": "pnpm run watch:ts",
+    "serve": "pnpm exec node ./server.js",
+    "build": "pnpm run build:ts && pnpm run build:dist"
+  },
+  "publishConfig": {
+    "@nicholaskoldys:registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "dist"
+  ],
+  "packageManager": "pnpm@9.0.6+sha1.648f6014eb363abb36618f2ba59282a9eeb3e879",
+  "types": "./dist/KeyCodeParser.d.ts",
+  "bugs": "https://github.com/NicholasKoldys/key-code-parser/issues",
+  "homepage": "https://github.com/NicholasKoldys/key-code-parser",
+  "keywords": [
+    "user-key",
+    "custom-markdown",
+    "js-parser"
+  ]
+}

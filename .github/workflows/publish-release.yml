@@ -1,0 +1,59 @@
+name: Release and Publish pkg
+
+run-name: Deploy by @${{ github.actor }}
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Zip files
+        run: |
+          mkdir -p release
+          zip -r release/KeyCodeParser.zip ./dist
+
+      - name: Release zip
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          artifacts: release/KeyCodeParser.zip
+          body: "zipped minifyied file"
+
+  publish-gpr:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://npm.pkg.github.com/
+          scope: '@nicholaskoldys'
+      - run : pnpm i --prod
+
+      - name: Publish
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

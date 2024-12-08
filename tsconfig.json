@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", 
+    "esModuleInterop": true,
+    "isolatedModules": true, 
+    "allowSyntheticDefaultImports": true,
+    "module": "ESNext", 
+    "moduleResolution": "node", 
+    "lib": [ "ESNext", "DOM" ],
+    "rootDir": "./src",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "noImplicitAny": true, 
+    "noImplicitThis": true, 
+    "forceConsistentCasingInFileNames": true, 
+    "outDir": "./build",
+    "declaration": true,
+    "declarationDir": "./build",
+    "strict": true,
+    "skipLibCheck": true, 
+  },
+  "exclude": [ 
+    "node_modules",
+    "build",
+    "demo",
+    "dist"
+  ],
+}
