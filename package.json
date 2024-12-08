@@ -1,7 +1,7 @@
 {
   "name": "@nicholaskoldys/key-code-parser",
   "author": "NicholasKoldys.dev",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "./dist/DeclarationWebpackPlugin.min.js",
   "type": "module",
