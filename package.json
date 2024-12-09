@@ -1,11 +1,11 @@
 {
   "name": "@nicholaskoldys/key-code-parser",
-  "author": "NicholasKoldys.dev",
-  "version": "1.0.1",
+  "author": "Nicholas Koldys <> (https://NicholasKoldys.dev/)",
+  "version": "1.1.0",
   "description": "",
-  "main": "./dist/DeclarationWebpackPlugin.min.js",
+  "main": "./dist/KeyCodeParser.min.js",
   "type": "module",
-  "module": "./dist/DeclarationWebpackPlugin.min.js",
+  "module": "./dist/KeyCodeParser.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/NicholasKoldys/key-code-parser.git"
