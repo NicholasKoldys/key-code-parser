@@ -1,6 +1,6 @@
 # Key - Code - Parser
 
-> Package Name : @nicholaskoldys/key-code-parser@1.0.1
+> Package Name : @nicholaskoldys/key-code-parser
 
 For testing of functionality, run the demo's public html.
 
