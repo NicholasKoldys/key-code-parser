@@ -170,7 +170,13 @@ export class KeyCodeParser {
 
   private *iterateTokensHelper( tokenArray?: Array<Token>, type?: { getAll: boolean } ): Generator<Token> {
 
-    if(!tokenArray) tokenArray = this.tokens;
+    if( !tokenArray ) {
+
+      if ( this.tokens.length > 0) 
+        tokenArray = this.tokens;
+      else return;
+
+    } else if( tokenArray.length < 1 ) return;
 
     for(let i = 0; i < tokenArray.length; i++) {
 
@@ -180,7 +186,7 @@ export class KeyCodeParser {
 
         yield* this.iterateTokensHelper( tokenArray[i].children, type );
 
-      } else if ( !type?.getAll) {
+      } else if ( !type?.getAll ) {
 
         yield tokenArray[i];
       }
@@ -221,24 +227,30 @@ export class KeyCodeParser {
     return stringArray;
   }
 
-  iterateTokens( callback: ( t: Token ) => any, tokenArray?: Array<Token>, 
-    options?: { fromIter?: number, callWithParents?: boolean, } 
+  iterateTokens( 
+    callback: ( t: Token ) => any, 
+    options: { fromIter?: number, callWithParents?: boolean, } = { fromIter: 0, callWithParents: false },
+    tokenArray?: Array<Token>
   ) {
 
-    if( !tokenArray ) tokenArray = this.tokens;
+    if( !tokenArray ) {
 
-    for( let i = options?.fromIter || 0; i < tokenArray.length; i++) {
+      if ( this.tokens.length > 0) 
+        tokenArray = this.tokens;
+      else return;
 
-      if( options?.callWithParents ) callback( tokenArray[i] );
+    } else if( tokenArray.length < 1 ) return;
+
+    for( let i = options.fromIter || 0; i < tokenArray.length; i++) {
+
+      if( options.callWithParents ) callback( tokenArray[i] );
 
       if( tokenArray[i]?.children ) {
 
-        this.iterateTokens( callback, tokenArray[i]!.children, { 
-          fromIter: 0, 
-          callWithParents: options?.callWithParents || false 
-        } );
+        this.iterateTokens( callback, { ...options, fromIter: 0 }, tokenArray[i].children );
 
-      } else {
+      } else if( !options.callWithParents ){
+
         callback( tokenArray[i] );
       }
     }
