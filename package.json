@@ -26,8 +26,8 @@
   },
   "scripts": {
     "lock": "pnpm i --lockfile-only",
-    "watch:ts": "pnpm exec tsc --watch",
-    "watch:node": "pnpm exec node --test --watch",
+    "watch:ts": "pnpm exec tsc --watch -p ./tsconfig.json",
+    "watch:node": "pnpm exec node --test --watch \"./build/_test/**/_Parser.js\"",
     "build:ts": "pnpm exec tsc -p ./tsconfig.json",
     "build:better": "pnpm exec esbuild \"./src/**/*.ts\" --outdir=\"./build\" --tsconfig=tsconfig.json ",
     "build:dist": "pnpm exec webpack --config=webpack.config.js",
