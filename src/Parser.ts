@@ -61,20 +61,19 @@ class Tokenizer {
 
 class KeyInterpreter {
   Tokenizer: Tokenizer;
-  tokens: Array<Token>;
   inlineQueue: Array<Token>;
 
-  constructor( usersKeys: DefinedKeys | Array<Key> = defaultKeys, tokenArray: Array<Token> ) {
+  constructor( usersKeys: DefinedKeys | Array<Key> = defaultKeys) {
     if( Array.isArray( usersKeys ) ) {
       usersKeys = mapToKeyable( ...usersKeys );
     }
     const fullKeys = Object.assign( Object.assign({}, defaultKeys), usersKeys );
     this.Tokenizer = new Tokenizer( fullKeys );
-    this.tokens = tokenArray;
     this.inlineQueue = [];
   }
 
   lexalizeFrom( 
+    tokens: Array<Token>,
     src: string, 
     rules: BlockRules | InlineRules = this.Tokenizer.blockRules, 
     parent?: Token, 
@@ -103,7 +102,7 @@ class KeyInterpreter {
             tokenArray = parent.children;
 
           } else {
-            tokenArray = this.tokens;
+            tokenArray = tokens;
           }
 
           //* get the last token for possible concatenation.
@@ -126,7 +125,7 @@ class KeyInterpreter {
           if( orderedRule?.hasTokens ) {
 
             if( Ruleable.Paragraph in rules ) {
-              this.lexalizeFrom( token.text, rules, token, 0, ( depthCount + 1 ) );
+              this.lexalizeFrom( tokens, token.text, rules, token, 0, ( depthCount + 1 ) );
 
             } else {
               this.inlineQueue.push( token );
@@ -142,7 +141,7 @@ class KeyInterpreter {
 
     if(Ruleable.TextBlock in rules) {
       for(let i = 0; i < this.inlineQueue.length; i++) {
-        this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i], 0, 1 );
+        this.lexalizeFrom( tokens, this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i], 0, 1 );
       }
     }
   }
@@ -155,16 +154,16 @@ export class KeyCodeParser {
 
   constructor( userKeys?: DefinedKeys | Array<Key> ) {
     this.tokens = [];
-    this.interpretter = new KeyInterpreter( userKeys, this.tokens );
+    this.interpretter = new KeyInterpreter( userKeys );
   }
 
   parse( src: string, options?: Object ): Array<Token> {
 
-    if(this.tokens.length > 0) this.tokens = [];
+    this.tokens = [];
 
     src = src.trim();
 
-    this.interpretter.lexalizeFrom( src );
+    this.interpretter.lexalizeFrom( this.tokens, src );
 
     return this.tokens;
   }
