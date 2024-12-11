@@ -61,20 +61,19 @@ class Tokenizer {
 
 class KeyInterpreter {
   Tokenizer: Tokenizer;
-  tokens: Array<Token>;
   inlineQueue: Array<Token>;
 
-  constructor( usersKeys: DefinedKeys | Array<Key> = defaultKeys, tokenArray: Array<Token> ) {
+  constructor( usersKeys: DefinedKeys | Array<Key> = defaultKeys) {
     if( Array.isArray( usersKeys ) ) {
       usersKeys = mapToKeyable( ...usersKeys );
     }
     const fullKeys = Object.assign( Object.assign({}, defaultKeys), usersKeys );
     this.Tokenizer = new Tokenizer( fullKeys );
-    this.tokens = tokenArray;
     this.inlineQueue = [];
   }
 
   lexalizeFrom( 
+    tokens: Array<Token>,
     src: string, 
     rules: BlockRules | InlineRules = this.Tokenizer.blockRules, 
     parent?: Token, 
@@ -103,7 +102,7 @@ class KeyInterpreter {
             tokenArray = parent.children;
 
           } else {
-            tokenArray = this.tokens;
+            tokenArray = tokens;
           }
 
           //* get the last token for possible concatenation.
@@ -126,7 +125,7 @@ class KeyInterpreter {
           if( orderedRule?.hasTokens ) {
 
             if( Ruleable.Paragraph in rules ) {
-              this.lexalizeFrom( token.text, rules, token, 0, ( depthCount + 1 ) );
+              this.lexalizeFrom( tokens, token.text, rules, token, 0, ( depthCount + 1 ) );
 
             } else {
               this.inlineQueue.push( token );
@@ -142,7 +141,7 @@ class KeyInterpreter {
 
     if(Ruleable.TextBlock in rules) {
       for(let i = 0; i < this.inlineQueue.length; i++) {
-        this.lexalizeFrom( this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i], 0, 1 );
+        this.lexalizeFrom( tokens, this.inlineQueue[i].text, this.Tokenizer.inlineRules, this.inlineQueue[i], 0, 1 );
       }
     }
   }
@@ -155,26 +154,56 @@ export class KeyCodeParser {
 
   constructor( userKeys?: DefinedKeys | Array<Key> ) {
     this.tokens = [];
-    this.interpretter = new KeyInterpreter( userKeys, this.tokens );
+    this.interpretter = new KeyInterpreter( userKeys );
   }
 
   parse( src: string, options?: Object ): Array<Token> {
 
-    if(this.tokens.length > 0) this.tokens = [];
+    this.tokens = [];
 
     src = src.trim();
 
-    this.interpretter.lexalizeFrom( src );
+    this.interpretter.lexalizeFrom( this.tokens, src );
 
     return this.tokens;
   }
 
+  private *iterateTokensHelper( tokenArray?: Array<Token>, type?: { getAll: boolean } ): Generator<Token> {
+
+    if( !tokenArray ) {
+
+      if ( this.tokens.length > 0) 
+        tokenArray = this.tokens;
+      else return;
+
+    } else if( tokenArray.length < 1 ) return;
+
+    for(let i = 0; i < tokenArray.length; i++) {
+
+      if( type?.getAll ) yield tokenArray[i];
+
+      if( tokenArray[i]?.children ) {
+
+        yield* this.iterateTokensHelper( tokenArray[i].children, type );
+
+      } else if ( !type?.getAll ) {
+
+        yield tokenArray[i];
+      }
+    }
+  }
+
   *getOrderedChildren(): IterableIterator< Token > {
-    for( const parent of this.tokens ) {
-      if( parent?.children )
-        for( const child of parent.children ) {
-          yield child;
-        }
+
+    for(const val of this.iterateTokensHelper( this.tokens, { getAll: false } )) {
+      yield val;
+    }
+  }
+
+  *getTokenTree(): IterableIterator< Token > {
+
+    for(const val of this.iterateTokensHelper( this.tokens, { getAll: true } )) {
+      yield val;
     }
   }
 
@@ -198,16 +227,30 @@ export class KeyCodeParser {
     return stringArray;
   }
 
-  iterateTokens( callback: ( t: Token ) => any, tokenArray?: Array<Token> ) {
+  iterateTokens( 
+    callback: ( t: Token ) => any, 
+    options: { fromIter?: number, callWithParents?: boolean, } = { fromIter: 0, callWithParents: false },
+    tokenArray?: Array<Token>
+  ) {
 
-    if( !tokenArray ) tokenArray = this.tokens;
+    if( !tokenArray ) {
 
-    for( let i = 0; i < tokenArray.length; i++) {
+      if ( this.tokens.length > 0) 
+        tokenArray = this.tokens;
+      else return;
+
+    } else if( tokenArray.length < 1 ) return;
+
+    for( let i = options.fromIter || 0; i < tokenArray.length; i++) {
+
+      if( options.callWithParents ) callback( tokenArray[i] );
 
       if( tokenArray[i]?.children ) {
-        this.iterateTokens( callback, tokenArray[i]!.children );
 
-      } else {
+        this.iterateTokens( callback, { ...options, fromIter: 0 }, tokenArray[i].children );
+
+      } else if( !options.callWithParents ){
+
         callback( tokenArray[i] );
       }
     }
