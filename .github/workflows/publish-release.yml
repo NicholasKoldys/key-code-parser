@@ -27,7 +27,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref }}
           artifacts: release/KeyCodeParser.zip
           body: "zipped minifyied file"
 
