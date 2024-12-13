@@ -9,47 +9,8 @@ on:
 
 jobs:
 
-  increment-tag:
-    if: github.event.pull_request.merged == true
-    name: Create Latest Tag
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Get latest tag
-        id: get_tag
-        run: |
-          latest_tag=$(git describe --tags --abbrev=0)
-          echo " ::steps.get_tag.outputs. name=latest_tag::$latest_tag"
-
-      - name: Calculate next tag
-        id: calced_tag
-        run: |
-          latest_tag="${{ steps.get_tag.outputs.latest_tag }}"
-          if [[ $latest_tag =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-            major=${BASH_REMATCH[1]}
-            minor=${BASH_REMATCH[2]}
-            patch=${BASH_REMATCH[3]}
-            new_tag="v$((major)).$((minor)).$((patch + 1))"
-            echo " ::steps.calced_tag.outputs. name=new_tag::$new_tag"
-          else
-            echo " !!! Tag format not recognized. Using v#.#.# !!! "
-            exit 1;
-          fi
-
-      - name: Create and push new tag
-        run: |
-          new_tag="${{ steps.calced_tag.outputs.new_tag }}"
-          git config --global user.name "NicholasKoldys.dev/github-actions"
-          git config --global user.email "NicholasKoldys@github.com"
-          git tag "$new_tag"
-          git push origin "$new_tag"
-
   release:
     if: github.event.pull_request.merged == true
-    needs: increment-tag
     name: Create Release
     runs-on: ubuntu-latest
     steps:
