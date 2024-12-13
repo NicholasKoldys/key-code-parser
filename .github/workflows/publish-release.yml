@@ -9,30 +9,8 @@ on:
 
 jobs:
 
-  release:
-    if: github.event.pull_request.merged == true
-    name: Create Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Zip files
-        run: |
-          mkdir -p release
-          zip -r release/KeyCodeParser.zip ./dist
-
-      - name: Release zip
-        id: create_release
-        uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: release/KeyCodeParser.zip
-          body: "zipped minifyied file"
-
   publish-gpr:
     if: github.event.pull_request.merged == true
-    needs: release
     runs-on: ubuntu-latest
     strategy:
       matrix:
