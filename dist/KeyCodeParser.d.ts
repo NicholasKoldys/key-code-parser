@@ -35,9 +35,14 @@ export class KeyCodeParser {
     private interpretter;
     constructor(userKeys?: DefinedKeys | Array<Key>);
     parse(src: string, options?: Object): Array<Token>;
+    private iterateTokensHelper;
     getOrderedChildren(): IterableIterator<Token>;
+    getTokenTree(): IterableIterator<Token>;
     getStringArray(): Array<string>;
-    iterateTokens(callback: (t: Token) => any, tokenArray?: Array<Token>): void;
+    iterateTokens(callback: (t: Token) => any, options?: {
+        fromIter?: number;
+        callWithParents?: boolean;
+    }, tokenArray?: Array<Token>): void;
 }
 
 //* ../src/RegexTemplate.d.ts 
