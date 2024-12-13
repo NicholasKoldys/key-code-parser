@@ -28,7 +28,7 @@
   "scripts": {
     "lock": "pnpm i --lockfile-only",
     "watch:ts": "pnpm exec tsc --watch -p ./tsconfig.json",
-    "watch:node": "pnpm exec node --test --watch \"./build/_test/**/_Parser.js\"",
+    "watch:node": "pnpm exec node --test --watch \"./build/_test/**/*.js\"",
     "build:ts": "pnpm exec tsc -p ./tsconfig.json",
     "build:esb": "pnpm exec esbuild \"./src/**/*.ts\" --outdir=\"./build\" --tsconfig=tsconfig.json ",
     "build:dist": "pnpm exec webpack --config=webpack.config.js",
@@ -41,6 +41,10 @@
     "dev": "pnpm run dev:pack",
     "serve": "pnpm exec node ./server.js",
     "build": "pnpm run build:ts && pnpm run build:dist"
+  },
+  "script_comments": {
+    "create dist": "run ~: pnpm build ; this will create the build and dist directories.",
+    "watch mode": "run ~: pnpm active-test ; this script combines the build dir, with test directory ; best used with seperated terminals and running pnpm exec node --watch \"dir/file.js\""
   },
   "publishConfig": {
     "@nicholaskoldys:registry": "https://npm.pkg.github.com"
