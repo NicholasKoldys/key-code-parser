@@ -35,7 +35,9 @@ export class KeyCodeParser {
     private interpretter;
     constructor(userKeys?: DefinedKeys | Array<Key>);
     parse(src: string, options?: Object): Array<Token>;
-    private iterateTokensHelper;
+    iterateTokensHelper(tokenArray?: Array<Token>, type?: {
+        getAll: boolean;
+    }): Generator<Token>;
     getOrderedChildren(): IterableIterator<Token>;
     getTokenTree(): IterableIterator<Token>;
     getStringArray(): Array<string>;
@@ -84,15 +86,8 @@ export type BlockRules = {
 export type InlineRules = {
     [key: string]: Rules;
 };
-/**
- * Sorted List of Rules most sectionable to least.
- * The most sectionable are profiled first and will be styled before the least.
- *  * Map is used to ensure preserved order.
- */
+
 export const BlockOrderedRules: (keys: DefinedKeys) => BlockRules;
-/**
- * Sorted List of Rules most applicable to least. ~think big contains small
- *  * Map is used to ensure preserved order.
- */
+
 export const InlineOrderedRules: (keys: DefinedKeys) => InlineRules;
 
