@@ -86,15 +86,8 @@ export type BlockRules = {
 export type InlineRules = {
     [key: string]: Rules;
 };
-/**
- * Sorted List of Rules most sectionable to least.
- * The most sectionable are profiled first and will be styled before the least.
- *  * Map is used to ensure preserved order.
- */
+
 export const BlockOrderedRules: (keys: DefinedKeys) => BlockRules;
-/**
- * Sorted List of Rules most applicable to least. ~think big contains small
- *  * Map is used to ensure preserved order.
- */
+
 export const InlineOrderedRules: (keys: DefinedKeys) => InlineRules;
 
