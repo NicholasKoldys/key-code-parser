@@ -35,7 +35,9 @@ export class KeyCodeParser {
     private interpretter;
     constructor(userKeys?: DefinedKeys | Array<Key>);
     parse(src: string, options?: Object): Array<Token>;
-    private iterateTokensHelper;
+    iterateTokensHelper(tokenArray?: Array<Token>, type?: {
+        getAll: boolean;
+    }): Generator<Token>;
     getOrderedChildren(): IterableIterator<Token>;
     getTokenTree(): IterableIterator<Token>;
     getStringArray(): Array<string>;

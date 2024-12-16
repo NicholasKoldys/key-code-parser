@@ -9,6 +9,8 @@ Constains Tokenizer - Keyinterpreter - KeyParser API
 
 History
 -------
+2024/12/16 - Nicholas.K. - 1.2.3
+  Add iterator methods/generators for ease of looping.
 2022/07/07 - Nicholas.K. - 1.0.0
   Initial creation.
  */
@@ -168,7 +170,7 @@ export class KeyCodeParser {
     return this.tokens;
   }
 
-  private *iterateTokensHelper( tokenArray?: Array<Token>, type?: { getAll: boolean } ): Generator<Token> {
+  *iterateTokensHelper( tokenArray?: Array<Token>, type: { getAll: boolean } = { getAll: true } ): Generator<Token> {
 
     if( !tokenArray ) {
 
